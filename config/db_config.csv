@@ -1,0 +1,5 @@
+﻿user,pnn_user
+password,123
+host,localhost
+port,5432
+dbname,pnn

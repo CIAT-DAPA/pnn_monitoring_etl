@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caches
+*.pyc
+
+# Output of the 'coverage' tool
+coverage/
+
+# setuptools
+*.egg-info/
+dist/
+
+# Virtual environment
+venv/
+env/
+__env__/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# PyInstaller
+build/
+dist/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
