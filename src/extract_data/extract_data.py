@@ -13,6 +13,7 @@ class ExtractData():
         self.connection = connection
         self.matriz_name = "matriz_name"
         self.log_error_file = "extract_error_log.txt"
+        self.skiprows = 5
         self.dfs = []
 
     def read_data(self):
@@ -31,7 +32,7 @@ class ExtractData():
 
                 sheet_name = self.tools.get_specific_parameter(self.matriz_name,self.config_file_path)
 
-                df = pd.read_excel(os.path.join(self.files_to_import_path, file), sheet_name=sheet_name)
+                df = pd.read_excel(os.path.join(self.files_to_import_path, file), sheet_name=sheet_name, skiprows=self.skiprows, header=0)
 
                 try:
                     sirap = self.connection.session.query(Sirap).filter_by(name=file_name).first()

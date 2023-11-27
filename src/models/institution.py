@@ -15,6 +15,6 @@ class Institution(Base):
     # Relación con la tabla Actor
     actors = relationship("Actor", back_populates="institution")
     # Relación con la tabla Responsible
-    resposibles = relationship("Responsible", back_populates="institution")
+    responsibles = relationship("Responsible", back_populates="institution")
 
     

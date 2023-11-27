@@ -29,6 +29,6 @@ class Input(Base):
     # Relación con la tabla Actor
     actors = relationship("Actor", back_populates="input")
     # Relación con la tabla Responsible
-    resposibles = relationship("Responsible", back_populates="input")
+    responsibles = relationship("Responsible", back_populates="input")
 
 
