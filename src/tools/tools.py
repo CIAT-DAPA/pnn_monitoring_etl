@@ -1,6 +1,7 @@
 import pandas as pd
 import os, sys
 from datetime import datetime
+import unicodedata
 
 class Tools():
 
@@ -32,3 +33,8 @@ class Tools():
         error_log_file = os.path.join(log_path, file_name)
         with open(error_log_file, 'a') as f:
             f.write(f"{datetime.now()}: {message}\n")
+
+
+    def normalize_text(self,data):
+        text = unicodedata.normalize('NFKD', data).encode('ASCII', 'ignore').decode('utf-8')
+        return text.lower().strip()

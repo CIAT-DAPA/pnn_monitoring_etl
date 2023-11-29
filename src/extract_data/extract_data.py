@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from tools import Tools
 from models.sirap import Sirap
+from enums import ExcelColumns
 
 class ExtractData():
 
@@ -37,7 +38,17 @@ class ExtractData():
                 try:
                     sirap = self.connection.session.query(Sirap).filter_by(name=file_name).first()
                     if(sirap):
+
+                        column_mapping = {
+                            actual_column: enum_member.value
+                            for enum_member in ExcelColumns
+                            for actual_column in df.columns
+                            if self.tools.normalize_text(enum_member.value) in self.tools.normalize_text(actual_column)
+                            and self.tools.normalize_text(actual_column).index(self.tools.normalize_text(enum_member.value)) == 0
+                        }
+                        df.rename(columns=column_mapping, inplace=True)
                         data_with_ids.append({'id': sirap.id, 'data': df})
+                        
                     else:
                         msg_error = f"No se encontro el Sirap con el ext_id: {file_name}"
                         self.tools.write_log(msg_error, self.log_error_file)

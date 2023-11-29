@@ -10,19 +10,21 @@ class TransformData():
         self.data = data
         self.column_error = ""
         self.column_errors = []
-        self.error_count = 0
-        self.success_count = 0
-        self.errors = pd.DataFrame(columns=['id', 'name', 'error'])
         self.tools = Tools()
         self.log_error_file = "transform_errors.txt"
 
-        self.check_colums()
+        self.check_columns()
     
 
-    def check_colums(self):
+    def check_columns(self, expected_columns=None):
+        
+        if expected_columns is None:
+            expected_columns = set(enum.value for enum in ExcelColumns)
+            expected_columns = {unidecode(str(column).strip().upper()) for column in expected_columns}
+        else:
+            expected_columns = {unidecode(str(column).strip().upper()) for column in expected_columns}
 
-        expected_columns = set(enum.value for enum in ExcelColumns)
-        expected_columns = {unidecode(str(column).strip().upper()) for column in expected_columns}
+        print(expected_columns)
         actual_columns = set(self.data["data"].columns)
         actual_columns = {unidecode(str(column).strip().upper()) for column in actual_columns}
 

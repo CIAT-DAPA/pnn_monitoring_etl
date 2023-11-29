@@ -1,7 +1,6 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-import unicodedata
 from models.product import Product
 
 class ProductT(TransformData):
@@ -11,6 +10,8 @@ class ProductT(TransformData):
         self.column_name = ExcelColumns.PRODUCT.value
         self.load = load
         self.log_error_file = "product_error_log.txt"
+
+        self.check_columns([self.column_name])
     
 
     def obtain_data_from_df(self):
@@ -21,7 +22,7 @@ class ProductT(TransformData):
 
             for index, row in self.data["data"].iterrows():
                 if(pd.notna(row[self.column_name])):
-                    normalize_data = self.normalize_text(row[self.column_name])
+                    normalize_data = self.tools.normalize_text(row[self.column_name])
 
                     data = {'normalize': normalize_data, 'original': row[self.column_name]}
         
@@ -48,7 +49,7 @@ class ProductT(TransformData):
         try: 
 
             existing_products = self.load.session.query(Product.name).all()
-            existing_products = set(self.normalize_text(row[0]) for row in existing_products)
+            existing_products = set(self.tools.normalize_text(row[0]) for row in existing_products)
             return existing_products
 
         except Exception as e:
@@ -100,8 +101,3 @@ class ProductT(TransformData):
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
-
-
-    def normalize_text(self,data):
-        text = unicodedata.normalize('NFKD', data).encode('ASCII', 'ignore').decode('utf-8')
-        return text.lower().strip()
