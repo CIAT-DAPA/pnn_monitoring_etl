@@ -56,7 +56,7 @@ class ProductT(TransformData):
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
-            return False
+            return None
     
     def run_products(self):
 
@@ -67,7 +67,7 @@ class ProductT(TransformData):
 
         print("Finalizada la transformación de productos")
 
-        if existing_products and not new_products.empty:
+        if existing_products is not None and not new_products.empty:
 
             new_log = []
             existing_log = []
@@ -81,11 +81,12 @@ class ProductT(TransformData):
 
                         product = Product(name=row["original"], observation='')
                         self.load.add_to_session(product)
-                        self.load.load_to_db()
                         new_log.append(row["original"])
                     else:
 
                         existing_log.append(row["original"])
+
+                self.load.load_to_db()
 
                 msg = f'''Carga de productos exitosa
                 Nuevos productos guardados: {len(new_log)}
