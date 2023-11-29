@@ -38,7 +38,7 @@ class TransformData():
         
         if len(self.column_errors) > 0:
             msg_error = f"Error en las siguienets columnas: {', '.join(self.column_errors)}"
-            self.tools.log_error(msg_error, self.log_error_file)
+            self.tools.write_log(msg_error, self.log_error_file)
             raise ValueError(msg_error)
             
 

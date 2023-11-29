@@ -40,11 +40,11 @@ class ExtractData():
                         data_with_ids.append({'id': sirap.id, 'data': df})
                     else:
                         msg_error = f"No se encontro el Sirap con el ext_id: {file_name}"
-                        self.tools.log_error(msg_error, self.log_error_file)
+                        self.tools.write_log(msg_error, self.log_error_file)
                         print(msg_error)
                 except Exception as e:
                     msg_error = f"Error en la tabla Sirap: {str(e)}"
-                    self.tools.log_error(msg_error, self.log_error_file)
+                    self.tools.write_log(msg_error, self.log_error_file)
                     print(msg_error)
 
         self.dfs = data_with_ids

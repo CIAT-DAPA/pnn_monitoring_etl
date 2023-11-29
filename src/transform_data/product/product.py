@@ -10,33 +10,53 @@ class ProductT(TransformData):
         super().__init__(data)
         self.column_name = ExcelColumns.PRODUCT.value
         self.load = load
+        self.log_error_file = "product_error_log.txt"
     
 
     def obtain_data_from_df(self):
 
         data_to_save = []
 
-        for index, row in self.data["data"].iterrows():
-            if(pd.notna(row[self.column_name])):
-                normalize_data = self.normalize_text(row[self.column_name])
+        try:
 
-                data = {'normalize': normalize_data, 'original': row[self.column_name]}
-    
-                data_to_save.append(data)
-            
+            for index, row in self.data["data"].iterrows():
+                if(pd.notna(row[self.column_name])):
+                    normalize_data = self.normalize_text(row[self.column_name])
+
+                    data = {'normalize': normalize_data, 'original': row[self.column_name]}
         
-        df_result = pd.DataFrame(data_to_save)
+                    data_to_save.append(data)
+                
+            
+            df_result = pd.DataFrame(data_to_save)
 
-        df_result = df_result.drop_duplicates(subset='normalize')
+            df_result = df_result.drop_duplicates(subset='normalize')
 
-        return df_result
+            return df_result
+    
+        except Exception as e:
+
+            msg_error = f"Error al intentar transformar los productos: {str(e)}"
+            self.tools.write_log(msg_error, self.log_error_file)
+            print(msg_error)
+
+            return None
 
     
     def obtain_data_from_db(self):
 
-        existing_products = self.load.session.query(Product.name).all()
-        existing_products = set(self.normalize_text(row[0]) for row in existing_products)
-        return existing_products
+        try: 
+
+            existing_products = self.load.session.query(Product.name).all()
+            existing_products = set(self.normalize_text(row[0]) for row in existing_products)
+            return existing_products
+
+        except Exception as e:
+            msg_error = f"Error en la tabla Product al intentar obtener los datos: {str(e)}"
+            self.tools.write_log(msg_error, self.log_error_file)
+            print(msg_error)
+
+            return None
     
     def run_products(self):
 
@@ -47,26 +67,40 @@ class ProductT(TransformData):
 
         print("Finalizada la transformación de productos")
 
-        new_log = []
-        existing_log = []
+        if existing_products and new_products:
 
-        print("Inicia la carga de productos")
+            new_log = []
+            existing_log = []
 
-        for index, row in new_products.iterrows():
-            if row["normalize"] not in existing_products:
+            print("Inicia la carga de productos")
 
-                product = Product(name=row["original"], observation='')
-                self.load.add_to_session(product)
-                self.load.load_to_db()
-                new_log.append(row["original"])
-            else:
+            try:
 
-                existing_log.append(row["original"])
+                for index, row in new_products.iterrows():
+                    if row["normalize"] not in existing_products:
 
-        
-        print("Carga de productos exitosa")
-        print("Nuevos productos guardados:", len(new_log))
-        print("Productos ya existentes en la base de datos:", len(existing_log))
+                        product = Product(name=row["original"], observation='')
+                        self.load.add_to_session(product)
+                        self.load.load_to_db()
+                        new_log.append(row["original"])
+                    else:
+
+                        existing_log.append(row["original"])
+
+                msg = f'''
+                        Carga de productos exitosa
+                        Nuevos productos guardados: {len(new_log)}
+                        Productos ya existentes en la base de datos: {len(existing_log)}
+                    '''
+                print(msg)
+
+                self.tools.write_log(msg, "output.txt", True)
+
+            except Exception as e:
+                msg_error = f"Error al guardar los productos: {str(e)}"
+                self.tools.write_log(msg_error, self.log_error_file)
+                print(msg_error)
+
 
 
     def normalize_text(self,data):
