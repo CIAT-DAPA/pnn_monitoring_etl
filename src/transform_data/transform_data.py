@@ -24,7 +24,6 @@ class TransformData():
         else:
             expected_columns = {unidecode(str(column).strip().upper()) for column in expected_columns}
 
-        print(expected_columns)
         actual_columns = set(self.data["data"].columns)
         actual_columns = {unidecode(str(column).strip().upper()) for column in actual_columns}
 
