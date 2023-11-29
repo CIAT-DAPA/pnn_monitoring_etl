@@ -40,7 +40,7 @@ class ProductT(TransformData):
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
-            return None
+            return pd.DataFrame(columns=['name'])
 
     
     def obtain_data_from_db(self):
@@ -56,7 +56,7 @@ class ProductT(TransformData):
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
-            return None
+            return False
     
     def run_products(self):
 
@@ -67,7 +67,7 @@ class ProductT(TransformData):
 
         print("Finalizada la transformación de productos")
 
-        if existing_products and new_products:
+        if existing_products and not new_products.empty:
 
             new_log = []
             existing_log = []
@@ -87,11 +87,9 @@ class ProductT(TransformData):
 
                         existing_log.append(row["original"])
 
-                msg = f'''
-                        Carga de productos exitosa
-                        Nuevos productos guardados: {len(new_log)}
-                        Productos ya existentes en la base de datos: {len(existing_log)}
-                    '''
+                msg = f'''Carga de productos exitosa
+                Nuevos productos guardados: {len(new_log)}
+                Productos ya existentes en la base de datos: {len(existing_log)}'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)

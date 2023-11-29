@@ -9,6 +9,7 @@ __pycache__/
 # Output of the 'coverage' tool
 coverage/
 log/*
+outputs/*
 
 # setuptools
 *.egg-info/
