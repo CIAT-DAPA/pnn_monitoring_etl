@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import Guideline, ProductT
+from transform_data import Guideline, ProductT, InstitutionT
 from load import LoadData
 
 class ETLMaster():
@@ -49,6 +49,8 @@ class ETLMaster():
         for data in raw_data.dfs:
             test = ProductT(data, load)
             test.run_products()
+            test2 = InstitutionT(data, load)
+            test2.run_institution()
         #processed_data = self.transform(raw_data)
         #self.load(processed_data)
 

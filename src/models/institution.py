@@ -7,10 +7,7 @@ class Institution(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    initials = Column(String)
-    location = Column(String)
-    interest = Column(String)
-    authority = Column(String)
+    ext_id = Column(String)
 
     # Relación con la tabla Actor
     actors = relationship("Actor", back_populates="institution")
