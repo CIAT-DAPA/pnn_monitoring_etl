@@ -50,7 +50,7 @@ class GuidelineT(TransformData):
                 return df_result
             
             else:
-                msg_error = f"No hay objetivos en la base de datos con los que relacionar los lineamientos"
+                msg_error = f"\nNo hay objetivos en la base de datos con los que relacionar los lineamientos"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
@@ -58,7 +58,7 @@ class GuidelineT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"Error al intentar transformar los lineamientos: {str(e)}"
+            msg_error = f"\nError al intentar transformar los lineamientos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -74,7 +74,7 @@ class GuidelineT(TransformData):
             return existing_products
 
         except Exception as e:
-            msg_error = f"Error en la tabla Guideline al intentar obtener los datos: {str(e)}"
+            msg_error = f"\nError en la tabla Guideline al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -82,7 +82,7 @@ class GuidelineT(TransformData):
     
     def run_guidelines(self):
 
-        print("Inicia la transformación de lineamientos")
+        print("\nInicia la transformación de lineamientos")
 
         existing_products = self.obtain_data_from_db()
         new_products = self.obtain_data_from_df()
@@ -122,7 +122,7 @@ class GuidelineT(TransformData):
                     self.load.load_to_db(log_data)
                 
 
-                msg = f'''Carga de lineamientos exitosa
+                msg = f'''\nCarga de lineamientos exitosa
                 Nuevos lineamientos guardados: {len(new_log)}
                 Lineamientos ya existentes en la base de datos: {len(existing_log)}'''
                 print(msg)
@@ -130,11 +130,11 @@ class GuidelineT(TransformData):
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"Error al guardar los lineamientos: {str(e)}"
+                msg_error = f"\nError al guardar los lineamientos: {str(e)}"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
         else:
-            msg_error = f"No hay objetivos a los cuales relacionar los lineamientos:, por lo que no se pudo guardar los lineamientos"
+            msg_error = f"\nNo hay objetivos a los cuales relacionar los lineamientos, por lo que no se pudo guardar los lineamientos"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 

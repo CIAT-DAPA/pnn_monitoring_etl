@@ -37,7 +37,7 @@ class ProductT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"Error al intentar transformar los productos: {str(e)}"
+            msg_error = f"\nError al intentar transformar los productos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -53,7 +53,7 @@ class ProductT(TransformData):
             return existing_products
 
         except Exception as e:
-            msg_error = f"Error en la tabla Product al intentar obtener los datos: {str(e)}"
+            msg_error = f"\nError en la tabla Product al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -61,12 +61,12 @@ class ProductT(TransformData):
     
     def run_products(self):
 
-        print("Inicia la transformación de productos")
+        print("\nInicia la transformación de productos")
 
         existing_products = self.obtain_data_from_db()
         new_products = self.obtain_data_from_df()
 
-        print("Finalizada la transformación de productos")
+        print("\nFinalizada la transformación de productos")
 
         if existing_products is not None and not new_products.empty:
 
@@ -74,14 +74,14 @@ class ProductT(TransformData):
             existing_log = []
             log_data = []
 
-            print("Inicia la carga de productos")
+            print("\nInicia la carga de productos")
 
             try:
 
                 for index, row in new_products.iterrows():
                     if row["normalize"] not in existing_products:
 
-                        product = Product(name=row["original"], observation='')
+                        product = Product(name=row["original"])
                         self.load.add_to_session(product)
                         new_log.append(row["original"])
                         log_data.append(product)
@@ -94,7 +94,7 @@ class ProductT(TransformData):
                     self.load.load_to_db(log_data)
 
 
-                msg = f'''Carga de productos exitosa
+                msg = f'''\nCarga de productos exitosa
                 Nuevos productos guardados: {len(new_log)}
                 Productos ya existentes en la base de datos: {len(existing_log)}'''
                 print(msg)
@@ -102,7 +102,7 @@ class ProductT(TransformData):
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"Error al guardar los productos: {str(e)}"
+                msg_error = f"\nError al guardar los productos: {str(e)}"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 

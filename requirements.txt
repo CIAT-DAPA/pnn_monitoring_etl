@@ -3,7 +3,7 @@ greenlet==3.0.1
 numpy==1.26.2
 openpyxl==3.1.2
 pandas==2.1.3
-pnn-monitoring-orm @ git+https://github.com/CIAT-DAPA/pnn_monitoring_orm@af7c8c0cdf6a08ea005acfe95d339a6b19bbb05e
+pnn-monitoring-orm @ git+https://github.com/CIAT-DAPA/pnn_monitoring_orm
 psycopg2==2.9.9
 python-dateutil==2.8.2
 pytz==2023.3.post1
