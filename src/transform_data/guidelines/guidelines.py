@@ -91,6 +91,7 @@ class GuidelineT(TransformData):
 
             new_log = []
             existing_log = []
+            log_data = []
 
             print("\nInicia la carga de lineamientos")
 
@@ -98,6 +99,7 @@ class GuidelineT(TransformData):
 
                 ac_sirap_id = self.data["id"]
                 existing_text_set = {text for text, _, _ in existing_products}
+                
                 
 
                 for index, row in new_products.iterrows():
@@ -109,11 +111,15 @@ class GuidelineT(TransformData):
                         guideline = Guideline(name=row["original"], objective_id=row["objective"], sirap_id=ac_sirap_id)
                         self.load.add_to_session(guideline)
                         new_log.append(row["original"])
+                        log_data.append(guideline)
                     else:
 
                         existing_log.append(row["original"])
-
-                self.load.load_to_db()
+                    
+                if log_data:
+                    
+                    self.load.load_to_db(log_data)
+                
 
                 msg = f'''Carga de lineamientos exitosa
                 Nuevos lineamientos guardados: {len(new_log)}

@@ -72,6 +72,7 @@ class ProductT(TransformData):
 
             new_log = []
             existing_log = []
+            log_data = []
 
             print("Inicia la carga de productos")
 
@@ -83,11 +84,15 @@ class ProductT(TransformData):
                         product = Product(name=row["original"], observation='')
                         self.load.add_to_session(product)
                         new_log.append(row["original"])
+                        log_data.append(product)
                     else:
 
                         existing_log.append(row["original"])
 
-                self.load.load_to_db()
+                if log_data:
+                    
+                    self.load.load_to_db(log_data)
+
 
                 msg = f'''Carga de productos exitosa
                 Nuevos productos guardados: {len(new_log)}

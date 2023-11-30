@@ -75,6 +75,7 @@ class InstitutionT(TransformData):
 
             new_log = []
             existing_log = []
+            log_data = []
 
             print("Inicia la carga de instituciones")
 
@@ -86,10 +87,13 @@ class InstitutionT(TransformData):
                         institution = Institution(name=row["original"], ext_id='')
                         self.load.add_to_session(institution)
                         new_log.append(row["original"])
+                        log_data.append(institution)
                     else:
                         existing_log.append(row["original"])
 
-                self.load.load_to_db()
+                if log_data:
+                    
+                    self.load.load_to_db(log_data)
 
                 msg = f'''Carga de instituciones exitosa
                 Nuevas Instituciones guardados: {len(new_log)}

@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 class Guideline(Base):
     __tablename__ = 'Guidelines'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(String)
     name = Column(String)
     objective_id = Column(Integer, ForeignKey('Objectives.id'))
