@@ -14,5 +14,5 @@ class Milestone(Base):
 	# Relación con la tabla Action
 	action = relationship("Action", back_populates="milestones")
 	# Relación con la tabla Input
-	inputs = relationship("Input", back_populates="milestone")
+	details = relationship("Detail", back_populates="milestone")
 

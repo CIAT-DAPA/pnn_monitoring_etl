@@ -8,4 +8,4 @@ class Period(Base):
 	name = Column(String)
 	
 	# Relación con la tabla Input
-	inputs = relationship("Input", back_populates="period")
+	details = relationship("Detail", back_populates="period")

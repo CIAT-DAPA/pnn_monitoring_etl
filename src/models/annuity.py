@@ -10,4 +10,4 @@ class Annuity(Base):
   description = Column(String)
 
   # Relación con la tabla Input
-  inputs = relationship("Input", back_populates="annuity")
+  details = relationship("Detail", back_populates="annuity")

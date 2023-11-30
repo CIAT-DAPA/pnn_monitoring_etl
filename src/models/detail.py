@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Double, Date
 from .declarative_base import Base
 from sqlalchemy.orm import relationship
 
-class Input(Base):
-    __tablename__ = 'Inputs'
+class Detail(Base):
+    __tablename__ = 'Details'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -18,17 +18,17 @@ class Input(Base):
     milestone_id = Column(Integer, ForeignKey("Milestones.id"))
 
     # Relación con la tabla Period
-    period = relationship("Period", back_populates="inputs")
+    period = relationship("Period", back_populates="details")
     # Relación con la tabla Annuity
-    annuity = relationship("Annuity", back_populates="inputs")
+    annuity = relationship("Annuity", back_populates="details")
     # Relación con la tabla Product
-    product = relationship("Product", back_populates="inputs")
+    product = relationship("Product", back_populates="details")
     # Relación con la tabla Milestone
-    milestone = relationship("Milestone", back_populates="inputs")
+    milestone = relationship("Milestone", back_populates="details")
 
     # Relación con la tabla Actor
-    actors = relationship("Actor", back_populates="input")
+    actors = relationship("Actor", back_populates="detail")
     # Relación con la tabla Responsible
-    responsibles = relationship("Responsible", back_populates="input")
+    responsibles = relationship("Responsible", back_populates="detail")
 
 

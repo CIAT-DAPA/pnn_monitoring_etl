@@ -7,9 +7,9 @@ class Responsible(Base):
 
     id = Column(Integer, primary_key=True)
     institution_id = Column(Integer, ForeignKey("Institutions.id"))
-    input_id = Column(Integer, ForeignKey("Inputs.id"))
+    detail_id = Column(Integer, ForeignKey("Details.id"))
 
     # Relación con la tabla Actor
     institution = relationship("Institution", back_populates="responsibles")
     # Relación con la tabla Responsible
-    input = relationship("Input", back_populates="responsibles")
+    detail = relationship("Detail", back_populates="responsibles")

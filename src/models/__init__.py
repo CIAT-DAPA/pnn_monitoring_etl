@@ -3,7 +3,7 @@ from .actor import Actor
 from .annuity import Annuity
 from .declarative_base import Base
 from .guideline import Guideline
-from .input import Input
+from .detail import Detail
 from .institution import Institution
 from .milestone import Milestone
 from .objective import Objective
