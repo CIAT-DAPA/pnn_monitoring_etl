@@ -22,13 +22,19 @@ class InstitutionT(TransformData):
 
             for index, row in self.data["data"].iterrows():
                 if(pd.notna(row[self.column_name_actor])):
-                    
-                    normalize_data = self.tools.normalize_text(row[self.column_name_actor])
-                    normalize_data_split = normalize_data.split("-") 
-                    for data in normalize_data_split:
-                        data = {'normalize': data.strip(), 'original': row[self.column_name_actor]}
+                    institutions=row[self.column_name_actor]
+                    institutions=institutions.replace("-", ",").split(",")
+                    for data in institutions:
+                        data = {'normalize': self.tools.normalize_text(data), 'original': data}
                         data_to_save.append(data)
-                
+
+                if(pd.notna(row[self.column_name_responsible])):
+                    institutions=row[self.column_name_responsible]
+                    institutions=institutions.replace("-", ",").split(",")
+                    for data in institutions:
+                        data = {'normalize': self.tools.normalize_text(data), 'original': data}
+                        data_to_save.append(data)
+
             df_result = pd.DataFrame(data_to_save)
             df_result = df_result.drop_duplicates(subset='normalize')
             return df_result
