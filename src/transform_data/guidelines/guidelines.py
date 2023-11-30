@@ -92,17 +92,17 @@ class GuidelineT(TransformData):
             new_log = []
             existing_log = []
 
-            print("Inicia la carga de lineamientos")
+            print("\nInicia la carga de lineamientos")
 
             try:
 
                 ac_sirap_id = self.data["id"]
-                existing_text_set = {text for text, _ in existing_products}
+                existing_text_set = {text for text, _, _ in existing_products}
                 
-                
+
                 for index, row in new_products.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and objective_id != row["objective"] for text, objective_id in existing_products) 
+                        or any(text == row["normalize"] and objective_id != row["objective"] for text, objective_id, _ in existing_products) 
                         or any(text == row["normalize"] and objective_id == row["objective"] and sirap_id != ac_sirap_id 
                                for text, objective_id, sirap_id in existing_products) ):
 
