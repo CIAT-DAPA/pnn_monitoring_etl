@@ -1,1 +1,1 @@
-from .guidelines import Guideline
+from .guidelines import GuidelineT
