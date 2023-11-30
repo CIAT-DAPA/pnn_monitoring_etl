@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import os
-from models import *
+from pnn_monitoring_orm import Base
 
 
 class PostgresConnection():

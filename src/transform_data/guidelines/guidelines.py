@@ -1,8 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from models.guideline import Guideline
-from models.objective import Objective
+from pnn_monitoring_orm import Guideline, Objective
 
 class GuidelineT(TransformData):
 
@@ -54,6 +53,8 @@ class GuidelineT(TransformData):
                 msg_error = f"No hay objetivos en la base de datos con los que relacionar los lineamientos"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
+
+                return pd.DataFrame(columns=['name'])
     
         except Exception as e:
 
@@ -132,6 +133,10 @@ class GuidelineT(TransformData):
                 msg_error = f"Error al guardar los lineamientos: {str(e)}"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
+        else:
+            msg_error = f"No hay objetivos a los cuales relacionar los lineamientos:, por lo que no se pudo guardar los lineamientos"
+            self.tools.write_log(msg_error, self.log_error_file)
+            print(msg_error)
 
 
 

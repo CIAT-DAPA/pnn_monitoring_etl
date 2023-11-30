@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from tools import Tools
-from models.sirap import Sirap
+from pnn_monitoring_orm import Sirap
 from enums import ExcelColumns
 
 class ExtractData():

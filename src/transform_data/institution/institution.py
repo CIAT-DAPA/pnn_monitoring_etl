@@ -1,8 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-import unicodedata
-from models.institution import Institution
+from pnn_monitoring_orm import Institution
 
 class InstitutionT(TransformData):
 

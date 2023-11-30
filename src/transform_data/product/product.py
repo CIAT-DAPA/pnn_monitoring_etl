@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from models.product import Product
+from pnn_monitoring_orm import Product
 
 class ProductT(TransformData):
 
