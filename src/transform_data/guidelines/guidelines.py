@@ -13,7 +13,7 @@ class GuidelineT(TransformData):
         self.load = load
         self.log_error_file = "guideline_error_log.txt"
 
-        self.check_columns([self.guideline_column_name])
+        self.check_columns([self.guideline_column_name, self.objective_column_name])
     
 
     def obtain_data_from_df(self):
