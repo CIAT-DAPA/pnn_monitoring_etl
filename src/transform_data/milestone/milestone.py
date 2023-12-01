@@ -60,7 +60,7 @@ class MilestoneT(TransformData):
                 return df_result
             
             else:
-                msg_error = f"\nNo hay acciones en la base de datos con los que relacionar los hitos"
+                msg_error = f"No hay acciones en la base de datos con los que relacionar los hitos"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
@@ -68,7 +68,7 @@ class MilestoneT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"\nError al intentar transformar los hitos: {str(e)}"
+            msg_error = f"Error al intentar transformar los hitos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -84,7 +84,7 @@ class MilestoneT(TransformData):
             return existing_products
 
         except Exception as e:
-            msg_error = f"\nError en la tabla Milestone al intentar obtener los datos: {str(e)}"
+            msg_error = f"Error en la tabla Milestone al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -104,7 +104,7 @@ class MilestoneT(TransformData):
             existing_log = []
             log_data = []
 
-            print("\nInicia la carga de los hitos")
+            print("Inicia la carga de los hitos")
 
             try:
 
@@ -129,19 +129,19 @@ class MilestoneT(TransformData):
                     self.load.load_to_db(log_data)
                 
 
-                msg = f'''\nCarga de los hitos exitosa
+                msg = f'''Carga de los hitos exitosa
                 Nuevos hitos guardados: {len(new_log)}
-                Hitos ya existentes en la base de datos: {len(existing_log)}'''
+                Hitos ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"\nError al guardar los hitos: {str(e)}"
+                msg_error = f"Error al guardar los hitos: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
         else:
-            msg_error = f"\nNo hay acciones a los cuales relacionar los hitos, por lo que no se pudo guardar los hitos"
+            msg_error = f"No hay acciones a los cuales relacionar los hitos, por lo que no se pudo guardar los hitos\n"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
