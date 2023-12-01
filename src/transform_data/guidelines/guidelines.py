@@ -11,6 +11,7 @@ class GuidelineT(TransformData):
         self.objective_column_name = ExcelColumns.OBJECTIVE.value
         self.load = load
         self.log_error_file = "guideline_error_log.txt"
+        self.data_with_error = []
 
         self.check_columns([self.guideline_column_name, self.objective_column_name])
     
@@ -40,6 +41,13 @@ class GuidelineT(TransformData):
                             data = {'normalize': normalize_data, 'original': row[self.guideline_column_name], "objective": objective_id}
                 
                             data_to_save.append(data)
+
+                        else:
+
+                            data = {'original': row[self.milestone_column_name], "prod_ind": row[self.prod_ind_column_name], 
+                                    "row": index, "column": self.milestone_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+
+                            self.data_with_error.append(data)
                         
                     
                 

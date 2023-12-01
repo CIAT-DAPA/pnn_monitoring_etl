@@ -2,4 +2,4 @@ from .transform_data import TransformData
 from .guidelines import GuidelineT
 from .product import ProductT
 from .institution import InstitutionT
-from .objective import ObjectiveT
+from .milestone import MilestoneT
