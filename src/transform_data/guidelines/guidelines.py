@@ -11,6 +11,7 @@ class GuidelineT(TransformData):
         self.objective_column_name = ExcelColumns.OBJECTIVE.value
         self.load = load
         self.log_error_file = "guideline_error_log.txt"
+        self.data_with_error = []
 
         self.check_columns([self.guideline_column_name, self.objective_column_name])
     
@@ -40,6 +41,13 @@ class GuidelineT(TransformData):
                             data = {'normalize': normalize_data, 'original': row[self.guideline_column_name], "objective": objective_id}
                 
                             data_to_save.append(data)
+
+                        else:
+
+                            data = {'original': row[self.milestone_column_name], "prod_ind": row[self.prod_ind_column_name], 
+                                    "row": index, "column": self.milestone_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+
+                            self.data_with_error.append(data)
                         
                     
                 
@@ -50,7 +58,7 @@ class GuidelineT(TransformData):
                 return df_result
             
             else:
-                msg_error = f"\nNo hay objetivos en la base de datos con los que relacionar los lineamientos"
+                msg_error = f"No hay objetivos en la base de datos con los que relacionar los lineamientos"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
@@ -58,7 +66,7 @@ class GuidelineT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"\nError al intentar transformar los lineamientos: {str(e)}"
+            msg_error = f"Error al intentar transformar los lineamientos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -74,7 +82,7 @@ class GuidelineT(TransformData):
             return existing_products
 
         except Exception as e:
-            msg_error = f"\nError en la tabla Guideline al intentar obtener los datos: {str(e)}"
+            msg_error = f"Error en la tabla Guideline al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -94,7 +102,7 @@ class GuidelineT(TransformData):
             existing_log = []
             log_data = []
 
-            print("\nInicia la carga de lineamientos")
+            print("Inicia la carga de lineamientos")
 
             try:
 
@@ -122,19 +130,19 @@ class GuidelineT(TransformData):
                     self.load.load_to_db(log_data)
                 
 
-                msg = f'''\nCarga de lineamientos exitosa
+                msg = f'''Carga de lineamientos exitosa
                 Nuevos lineamientos guardados: {len(new_log)}
-                Lineamientos ya existentes en la base de datos: {len(existing_log)}'''
+                Lineamientos ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"\nError al guardar los lineamientos: {str(e)}"
+                msg_error = f"Error al guardar los lineamientos: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
         else:
-            msg_error = f"\nNo hay objetivos a los cuales relacionar los lineamientos, por lo que no se pudo guardar los lineamientos"
+            msg_error = f"\nNo hay objetivos a los cuales relacionar los lineamientos, por lo que no se pudo guardar los lineamientos\n"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 

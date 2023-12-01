@@ -21,7 +21,7 @@ class ProductT(TransformData):
         try:
 
             for index, row in self.data["data"].iterrows():
-                if(pd.notna(row[self.column_name])):
+                if(pd.notna(row[self.column_name]) and row[self.column_name]):
                     normalize_data = self.tools.normalize_text(row[self.column_name])
 
                     data = {'normalize': normalize_data, 'original': row[self.column_name]}
@@ -37,7 +37,7 @@ class ProductT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"\nError al intentar transformar los productos: {str(e)}"
+            msg_error = f"Error al intentar transformar los productos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -53,7 +53,7 @@ class ProductT(TransformData):
             return existing_products
 
         except Exception as e:
-            msg_error = f"\nError en la tabla Product al intentar obtener los datos: {str(e)}"
+            msg_error = f"Error en la tabla Product al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -66,7 +66,7 @@ class ProductT(TransformData):
         existing_products = self.obtain_data_from_db()
         new_products = self.obtain_data_from_df()
 
-        print("\nFinalizada la transformación de productos")
+        print("Finalizada la transformación de productos")
 
         if existing_products is not None and not new_products.empty:
 
@@ -74,7 +74,7 @@ class ProductT(TransformData):
             existing_log = []
             log_data = []
 
-            print("\nInicia la carga de productos")
+            print("Inicia la carga de productos")
 
             try:
 
@@ -94,15 +94,15 @@ class ProductT(TransformData):
                     self.load.load_to_db(log_data)
 
 
-                msg = f'''\nCarga de productos exitosa
+                msg = f'''Carga de productos exitosa
                 Nuevos productos guardados: {len(new_log)}
-                Productos ya existentes en la base de datos: {len(existing_log)}'''
+                Productos ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"\nError al guardar los productos: {str(e)}"
+                msg_error = f"Error al guardar los productos: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
