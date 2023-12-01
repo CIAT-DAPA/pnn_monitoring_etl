@@ -40,7 +40,7 @@ class InstitutionT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"\nError al intentar transformar las instituciones: {str(e)}"
+            msg_error = f"Error al intentar transformar las instituciones: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -55,7 +55,7 @@ class InstitutionT(TransformData):
             return existing_institution
 
         except Exception as e:
-            msg_error = f"\nError en la tabla Instituciones al intentar obtener los datos: {str(e)}"
+            msg_error = f"Error en la tabla Instituciones al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -68,7 +68,7 @@ class InstitutionT(TransformData):
         existing_institution = self.obtain_data_from_db()
         new_institution = self.obtain_data_from_df()
 
-        print("\nFinalizada la transformación de instituciones")
+        print("Finalizada la transformación de instituciones")
 
         if existing_institution is not None and not new_institution.empty:
 
@@ -76,7 +76,7 @@ class InstitutionT(TransformData):
             existing_log = []
             log_data = []
 
-            print("\nInicia la carga de instituciones")
+            print("Inicia la carga de instituciones")
 
             try:
 
@@ -94,14 +94,14 @@ class InstitutionT(TransformData):
                     
                     self.load.load_to_db(log_data)
 
-                msg = f'''\nCarga de instituciones exitosa
+                msg = f'''Carga de instituciones exitosa
                 Nuevas Instituciones guardados: {len(new_log)}
-                Instituciones ya existentes en la base de datos: {len(existing_log)}'''
+                Instituciones ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"\nError al guardar las instituciones: {str(e)}"
+                msg_error = f"Error al guardar las instituciones: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
