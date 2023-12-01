@@ -12,6 +12,7 @@ class MilestoneT(TransformData):
         self.prod_ind_column_name = ExcelColumns.PRODUCT_INDICATOR.value
         self.load = load
         self.log_error_file = "milestone_error_log.txt"
+        self.data_with_error = []
 
         self.check_columns([self.milestone_column_name, self.action_column_name, self.prod_ind_column_name])
     
@@ -38,9 +39,17 @@ class MilestoneT(TransformData):
 
                             normalize_data = self.tools.normalize_text(row[self.milestone_column_name])
 
-                            data = {'normalize': normalize_data, 'original': row[self.milestone_column_name], "action": action_id, "prod_ind": row[self.prod_ind_column_name]}
+                            data = {'normalize': normalize_data, 'original': row[self.milestone_column_name], 
+                                    "action": action_id, "prod_ind": row[self.prod_ind_column_name]}
                 
                             data_to_save.append(data)
+                        
+                        else:
+
+                            data = {'original': row[self.milestone_column_name], "prod_ind": row[self.prod_ind_column_name], 
+                                    "row": index, "column": self.milestone_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+
+                            self.data_with_error.append(data)
                         
                     
                 

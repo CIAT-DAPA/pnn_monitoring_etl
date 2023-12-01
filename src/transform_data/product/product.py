@@ -21,7 +21,7 @@ class ProductT(TransformData):
         try:
 
             for index, row in self.data["data"].iterrows():
-                if(pd.notna(row[self.column_name])):
+                if(pd.notna(row[self.column_name]) and row[self.column_name]):
                     normalize_data = self.tools.normalize_text(row[self.column_name])
 
                     data = {'normalize': normalize_data, 'original': row[self.column_name]}
