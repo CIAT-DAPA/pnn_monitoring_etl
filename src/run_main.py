@@ -47,7 +47,10 @@ class ETLMaster():
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
-            
+
+            objective = ObjectiveT(data, load)
+            objective.run_objective()
+
             product = ProductT(data, load)
             product.run_products()
 
@@ -59,9 +62,6 @@ class ETLMaster():
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
-
-            objective = ObjectiveT(data, load)
-            objective.run_objective()
             
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")
