@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT
+from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT
 from load import LoadData
 
 class ETLMaster():
@@ -62,6 +62,9 @@ class ETLMaster():
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
+
+            responsible = ResponsibleT(data, load)
+            responsible.run_responsible()
 
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")
