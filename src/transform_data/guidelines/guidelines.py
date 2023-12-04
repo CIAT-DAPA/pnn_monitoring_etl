@@ -113,9 +113,8 @@ class GuidelineT(TransformData):
 
                 for index, row in new_products.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and objective_id != row["objective"] for text, objective_id, _ in existing_products) 
-                        or any(text == row["normalize"] and objective_id == row["objective"] and sirap_id != ac_sirap_id 
-                               for text, objective_id, sirap_id in existing_products) ):
+                        or not any(text == row["normalize"] and objective_id == row["objective"] and sirap_id == ac_sirap_id
+                                    for text, objective_id, sirap_id in existing_products)):
 
                         guideline = Guideline(name=row["original"], objective_id=row["objective"], sirap_id=ac_sirap_id)
                         self.load.add_to_session(guideline)

@@ -69,8 +69,8 @@ class ETLMaster():
             detail = DetailT(data, load)
             detail.run_detail()
 
-            responsible = ResponsibleT(data, load)
-            responsible.run_responsible()
+            #responsible = ResponsibleT(data, load)
+            #responsible.run_responsible()
 
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")

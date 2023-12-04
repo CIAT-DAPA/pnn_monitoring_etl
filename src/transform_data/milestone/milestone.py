@@ -118,7 +118,8 @@ class MilestoneT(TransformData):
 
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and action_id != row["action"] for text, action_id in existing_data)):
+                        or not any(text == row["normalize"] and action_id == row["action"]
+                                    for text, action_id in existing_data)):
 
                         milestone = Milestone(name=row["original"], action_id=row["action"], product_indc=row["prod_ind"], obs=row["obs"]  )
                         self.load.add_to_session(milestone)

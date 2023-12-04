@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Detail, Milestone, Period, Product
+from pnn_monitoring_orm import Detail, Milestone, Period, Product, Time, Year
 from datetime import datetime
 
 class DetailT(TransformData):
@@ -61,16 +61,20 @@ class DetailT(TransformData):
                             goal = row[self.goal_column_name] if self.validate_data(row[self.goal_column_name], 1) else False
                             base_line = row[self.base_line_column_name] if self.validate_data(row[self.base_line_column_name], 1) else False
                             imp_value = row[self.imp_value_column_name] if self.validate_data(row[self.imp_value_column_name], 1) else False
-                            
+
+                            annuity = []
+
+                            annuity = self.get_annuities(row[self.annuity_column_name])
+
 
                             if (amount is not False and quantity is not False and goal is not False and 
-                                base_line is not False and imp_value is not False):
+                                base_line is not False and imp_value is not False and (annuity and len(annuity) > 0)):
 
                                 normalize_data = self.tools.normalize_text(row[self.detail_column_name])
 
                                 data = {'normalize': normalize_data, 'original': row[self.detail_column_name], 
                                         "amount": amount, "quantity": quantity, "goal": goal, "base_line": base_line, "imp_value": imp_value, 
-                                        "milestone_id": milestone_id, "period_id": period_id, "product_id": product_id}
+                                        "milestone_id": milestone_id, "period_id": period_id, "product_id": product_id, "annuity": annuity}
                                 
                     
                                 data_to_save.append(data)
@@ -93,7 +97,7 @@ class DetailT(TransformData):
                 
                 df_result = pd.DataFrame(data_to_save)
 
-                df_result = df_result.drop_duplicates(subset='normalize')
+                df_result = df_result.drop_duplicates(subset=['normalize', "milestone_id"])
 
                 return df_result
             
@@ -117,8 +121,8 @@ class DetailT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Detail.name, Detail.period_id, Detail.milestone_id, Detail.product_id).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.period_id, row.milestone_id, row.product_id) for row in existing_products)
+            existing_products = self.load.session.query(Detail.name, Detail.milestone_id).all()
+            existing_products = set((self.tools.normalize_text(row.name), row.milestone_id) for row in existing_products)
             return existing_products
 
         except Exception as e:
@@ -127,6 +131,23 @@ class DetailT(TransformData):
             print(msg_error)
 
             return None
+        
+
+    def obtain_years_from_db(self):
+
+        try: 
+
+            year = self.load.session.query(Year.id, Year.value).all()
+            year = set((row.id, row.value) for row in year)
+            return year
+
+        except Exception as e:
+            msg_error = f"Error en la tabla Year al intentar obtener los datos: {str(e)}"
+            self.tools.write_log(msg_error, self.log_error_file)
+            print(msg_error)
+
+            return None
+        
     
     def run_detail(self):
 
@@ -134,27 +155,26 @@ class DetailT(TransformData):
 
         existing_data = self.obtain_data_from_db()
         new_data = self.obtain_data_from_df()
+        years = self.obtain_years_from_db()
 
 
-        if existing_data is not None and not new_data.empty:
+        if existing_data is not None and not new_data.empty and years is not None:
 
             new_log = []
+            new_time_log = []
             existing_log = []
             log_data = []
+            log_time = []
 
             print("Inicia la carga de los detalles")
 
             try:
 
-                existing_text_set = {text for text, _, _, _ in existing_data}
+                existing_text_set = {text for text, _ in existing_data}
                 
-                
-
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and milestone_id != row["milestone_id"] for text, milestone_id, _, _ in existing_data)
-                        or any(text == row["normalize"] and product_id != row["product_id"] for text, product_id, _, _ in existing_data)
-                        or any(text == row["normalize"] and period_id != row["period_id"] for text, period_id, _, _ in existing_data)):
+                        or not any(text == row["normalize"] and milestone_id == row["milestone_id"] for text, milestone_id in existing_data)):
 
                         detail = Detail(name=row["original"], milestone_id=row["milestone_id"], product_id=row["product_id"], period_id=row["period_id"],
                                         amount=row["amount"], quantity=row["quantity"], goal=row["goal"], implemented_value=row["imp_value"],
@@ -162,6 +182,7 @@ class DetailT(TransformData):
                         self.load.add_to_session(detail)
                         new_log.append(row["original"])
                         log_data.append(detail)
+
                     else:
 
                         existing_log.append(row["original"])
@@ -169,14 +190,31 @@ class DetailT(TransformData):
                 if log_data:
                     
                     self.load.load_to_db(log_data)
+
+                print("Inicia la carga de la relación de detalles y años")
+                for index, data in enumerate(log_data):
+                    for year in new_data.at[index, "annuity"]:
+                        filtered_year = [id for id, value in years if value == year][0]
+                        time = Time(year_id=filtered_year, detail_id=data.id)
+                        self.load.add_to_session(time)
+                        new_time_log.append(year)
+                        log_time.append(time)
                 
+                if log_time:
+                    
+                    self.load.load_to_db(log_time)
 
                 msg = f'''Carga de los detalles exitosa
                 Nuevos detalles guardados: {len(new_log)}
                 Detalles ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
+                msg_time = f'''Carga de la relación de anualidad con los detalles exitosa
+                Nuevas anualidades guardadas: {len(new_time_log)}\n'''
+                print(msg_time)
+
                 self.tools.write_log(msg, "output.txt", True)
+                self.tools.write_log(msg_time, "output.txt", True)
 
             except Exception as e:
                 msg_error = f"Error al guardar los detalles: {str(e)}\n"
@@ -212,4 +250,32 @@ class DetailT(TransformData):
             return 0
 
 
+    def get_annuities(self, data):
 
+        range_years = "a"
+        individual = ","
+
+
+        if type(data) != int:
+            data = data.lower().strip()
+            data = data.replace(" ", "")
+            data = data.replace("al", range_years)
+            data = data.replace("-", individual)
+            data = data.replace("y", individual)
+            
+
+        if not range_years in str(data) and not individual in str(data):
+            return [data]
+        
+        elif range_years in str(data):
+            years = data.split(range_years)
+            sequence = range(int(years[0]), int(years[len(years)-1]) + 1)
+            year_list = [year for year in sequence]
+            return year_list
+
+        elif individual in str(data):
+            years = data.split(individual)
+            years = [int(year) for year in years]
+            return years
+            
+        
