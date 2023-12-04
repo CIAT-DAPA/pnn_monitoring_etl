@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT
+from transform_data import GuidelineT, ProductT, InstitutionT, ObjectiveT
 from load import LoadData
 
 class ETLMaster():
@@ -56,6 +56,9 @@ class ETLMaster():
 
             institution = InstitutionT(data, load)
             institution.run_institution()
+
+            objective = ObjectiveT(data, load)
+            objective.run_objective()
 
         #processed_data = self.transform(raw_data)
         #self.load(processed_data)
