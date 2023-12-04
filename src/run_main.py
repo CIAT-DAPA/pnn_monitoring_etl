@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT
+from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT, SirapT
 from load import LoadData
 
 class ETLMaster():
@@ -47,6 +47,9 @@ class ETLMaster():
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
+
+            sirap = SirapT(data, load)
+            sirap.run_sirap()
 
             objective = ObjectiveT(data, load)
             objective.run_objective()
