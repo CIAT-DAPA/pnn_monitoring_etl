@@ -1,15 +1,15 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Product
+from pnn_monitoring_orm import Period
 
-class ProductT(TransformData):
+class PeriodT(TransformData):
 
     def __init__(self,data, load):
         super().__init__(data)
-        self.column_name = ExcelColumns.PRODUCT.value
+        self.column_name = ExcelColumns.PERIOD.value
         self.load = load
-        self.log_error_file = "product_error_log.txt"
+        self.log_error_file = "period_error_log.txt"
 
         self.check_columns([self.column_name])
     
@@ -21,13 +21,12 @@ class ProductT(TransformData):
         try:
 
             for index, row in self.data["data"].iterrows():
-                if(pd.notna(row[self.column_name]) and row[self.column_name] and not row[self.column_name].isspace()):
+                if(pd.notna(row[self.column_name]) and row[self.column_name] 
+                   and not row[self.column_name].isspace()):
+                    
                     normalize_data = self.tools.normalize_text(row[self.column_name])
-
                     data = {'normalize': normalize_data, 'original': row[self.column_name]}
-        
                     data_to_save.append(data)
-                
             
             df_result = pd.DataFrame(data_to_save)
 
@@ -37,7 +36,7 @@ class ProductT(TransformData):
     
         except Exception as e:
 
-            msg_error = f"Error al intentar transformar los productos: {str(e)}"
+            msg_error = f"Error al intentar transformar los periodos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
@@ -48,43 +47,43 @@ class ProductT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Product.name).all()
-            existing_products = set(self.tools.normalize_text(row[0]) for row in existing_products)
-            return existing_products
+            existing_period = self.load.session.query(Period.name).all()
+            existing_period = set(self.tools.normalize_text(row[0]) for row in existing_period)
+            return existing_period
 
         except Exception as e:
-            msg_error = f"Error en la tabla Product al intentar obtener los datos: {str(e)}"
+            msg_error = f"Error en la tabla Period al intentar obtener los datos: {str(e)}"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
             return None
     
-    def run_products(self):
+    def run_periods(self):
 
-        print("\nInicia la transformación de productos")
+        print("\nInicia la transformación de periodos")
 
-        existing_products = self.obtain_data_from_db()
-        new_products = self.obtain_data_from_df()
+        existing_periods = self.obtain_data_from_db()
+        new_periods = self.obtain_data_from_df()
 
-        print("Finalizada la transformación de productos")
+        print("Finalizada la transformación de periodos")
 
-        if existing_products is not None and not new_products.empty:
+        if existing_periods is not None and not new_periods.empty:
 
             new_log = []
             existing_log = []
             log_data = []
 
-            print("Inicia la carga de productos")
+            print("Inicia la carga de periodos")
 
             try:
 
-                for index, row in new_products.iterrows():
-                    if row["normalize"] not in existing_products:
+                for index, row in new_periods.iterrows():
+                    if row["normalize"] not in existing_periods:
 
-                        product = Product(name=row["original"])
-                        self.load.add_to_session(product)
+                        period = Period(name=row["original"])
+                        self.load.add_to_session(period)
                         new_log.append(row["original"])
-                        log_data.append(product)
+                        log_data.append(period)
                     else:
 
                         existing_log.append(row["original"])
@@ -94,15 +93,14 @@ class ProductT(TransformData):
                     self.load.load_to_db(log_data)
 
 
-                msg = f'''Carga de productos exitosa
-                Nuevos productos guardados: {len(new_log)}
-                Productos ya existentes en la base de datos: {len(existing_log)}\n'''
+                msg = f'''Carga de periodos exitosa
+                Nuevos periodos guardados: {len(new_log)}
+                Periodos ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"Error al guardar los productos: {str(e)}\n"
+                msg_error = f"Error al guardar los periodos: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
-

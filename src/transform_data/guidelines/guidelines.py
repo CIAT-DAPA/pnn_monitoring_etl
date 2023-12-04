@@ -28,7 +28,7 @@ class GuidelineT(TransformData):
             if objectives_db:
 
                 for index, row in self.data["data"].iterrows():
-                    if(pd.notna(row[self.guideline_column_name]) and row[self.guideline_column_name]):
+                    if(pd.notna(row[self.guideline_column_name]) and row[self.guideline_column_name] and not row[self.guideline_column_name].isspace()):
 
                         objective_text = row[self.objective_column_name] if pd.notna(row[self.objective_column_name]) and row[self.objective_column_name] else objective_text
 
@@ -44,7 +44,7 @@ class GuidelineT(TransformData):
 
                         else:
 
-                            data = {'original': row[self.guideline_column_name], "prod_ind": row[self.objective_column_name], 
+                            data = {'original': row[self.guideline_column_name], "objective": row[self.objective_column_name], 
                                     "row": index, "column": self.guideline_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
 
                             self.data_with_error.append(data)
@@ -53,7 +53,7 @@ class GuidelineT(TransformData):
                 
                 df_result = pd.DataFrame(data_to_save)
 
-                df_result = df_result.drop_duplicates(subset='normalize')
+                df_result = df_result.drop_duplicates(subset=['normalize', 'objective'])
 
                 return df_result
             
