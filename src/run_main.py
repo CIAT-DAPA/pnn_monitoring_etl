@@ -62,7 +62,7 @@ class ETLMaster():
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
-            
+
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")
 
