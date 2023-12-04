@@ -30,7 +30,7 @@ class MilestoneT(TransformData):
             if actions_db:
 
                 for index, row in self.data["data"].iterrows():
-                    if(pd.notna(row[self.milestone_column_name]) and row[self.milestone_column_name]):
+                    if(pd.notna(row[self.milestone_column_name]) and row[self.milestone_column_name] and not row[self.milestone_column_name].isspace()):
 
                         action_text = row[self.action_column_name] if pd.notna(row[self.action_column_name]) and row[self.action_column_name] else action_text
 
