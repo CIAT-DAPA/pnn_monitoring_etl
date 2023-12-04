@@ -112,7 +112,7 @@ class ResponsibleT(TransformData):
                     if (row["institution_id"], row["detail_id"]) not in existing_responsible:
                         responsible = Responsible(institution_id=int(row["institution_id"]), detail_id=int(row["detail_id"]))
                         self.load.add_to_session(responsible)
-                        new_log.append(row["institution_id"]) #preguntar a santiago si es necesario guardar el id y el detail
+                        new_log.append(row["institution_id"], row["detail_id"])
                         log_data.append(responsible)
                     else:
                         existing_log.append(row["institution_id"])

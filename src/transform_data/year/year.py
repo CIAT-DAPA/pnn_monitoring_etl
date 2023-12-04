@@ -15,24 +15,28 @@ class YearT(TransformData):
 
     def obtain_data_from_df(self):
             data_to_save = []
+            min_year = None
+            max_year = None
     
             try:
-                print("antes for")
                 for index, row in self.data["data"].iterrows():
-                    print("despues for")
                     if(pd.notna(row[self.column_year]) and row[self.column_year]):
-                        print("if")
-                        normalize_data = self.tools.normalize_text(row[self.column_year])
-                        print(normalize_data)
-    
-                        data = {'normalize': normalize_data, 'original': row[self.column_year]}
-            
-                        data_to_save.append(data)
-                    
-                
+                        year=self.tools.normalize_text(str(row[self.column_year]))
+                        matches = re.findall(r'\d+', year)
+                        if matches:
+                            matches = [int(match) for match in matches]
+                            min_match = min(matches)
+                            max_match = max(matches)
+                            if min_year is None or min_match < min_year:
+                                min_year = min_match
+                            if max_year is None or max_match > max_year:
+                                max_year = max_match
+                for year in range(min_year, max_year + 1):
+                    data = {'year': year}
+                    data_to_save.append(data)
                 df_result = pd.DataFrame(data_to_save)
     
-                df_result = df_result.drop_duplicates(subset='normalize')
+                df_result = df_result.drop_duplicates(subset='year')
     
                 return df_result
         
@@ -59,12 +63,6 @@ class YearT(TransformData):
 
             return None
         
-    def extract_years(value):
-        # Encuentra todos los grupos de dígitos en la cadena de texto
-        matches = re.findall(r'\d+', value)
-        # Convierte los grupos de dígitos a enteros
-        years = [int(match) for match in matches]
-        return years
         
     def run_year(self):
 
@@ -86,15 +84,15 @@ class YearT(TransformData):
             try:
 
                 for index, row in new_years.iterrows():
-                    if row["normalize"] not in existing_years:
+                    if row["year"] not in existing_years:
 
-                        year = Year(value=int(row["original"]))
+                        year = Year(value=int(row["year"]))
                         self.load.add_to_session(year)
-                        new_log.append(row["original"])
+                        new_log.append(row["year"])
                         log_data.append(year)
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append(row["year"])
 
                 if log_data:
                     
