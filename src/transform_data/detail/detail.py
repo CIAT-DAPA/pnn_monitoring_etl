@@ -157,7 +157,7 @@ class DetailT(TransformData):
                         or any(text == row["normalize"] and period_id != row["period_id"] for text, period_id, _, _ in existing_data)):
 
                         detail = Detail(name=row["original"], milestone_id=row["milestone_id"], product_id=row["product_id"], period_id=row["period_id"],
-                                        amount=row["amount"], quantity=row["quantity"], goal=row["goal"], implemented_value=row["implemented_value"],
+                                        amount=row["amount"], quantity=row["quantity"], goal=row["goal"], implemented_value=row["imp_value"],
                                           base_line=row["base_line"], date=datetime.now())
                         self.load.add_to_session(detail)
                         new_log.append(row["original"])
