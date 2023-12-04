@@ -5,3 +5,5 @@ from .institution import InstitutionT
 from .milestone import MilestoneT
 from .objective import ObjectiveT
 from .detail import DetailT
+from .responsible import ResponsibleT
+from .period import PeriodT
