@@ -10,11 +10,12 @@ class MilestoneT(TransformData):
         self.milestone_column_name = ExcelColumns.MILESTONE.value
         self.action_column_name = ExcelColumns.ACTION.value
         self.prod_ind_column_name = ExcelColumns.PRODUCT_INDICATOR.value
+        self.prod_obs_column_name = ExcelColumns.OBSERVATION.value
         self.load = load
         self.log_error_file = "milestone_error_log.txt"
         self.data_with_error = []
 
-        self.check_columns([self.milestone_column_name, self.action_column_name, self.prod_ind_column_name])
+        self.check_columns([self.milestone_column_name, self.action_column_name, self.prod_ind_column_name, self.prod_obs_column_name])
     
 
     def obtain_data_from_df(self):
@@ -31,16 +32,19 @@ class MilestoneT(TransformData):
                 for index, row in self.data["data"].iterrows():
                     if(pd.notna(row[self.milestone_column_name]) and row[self.milestone_column_name]):
 
-                        action_text = row[self.action_column_name] if pd.notna(row[self.action_column_name]) and row[self.action_column_name] else actions_db
+                        action_text = row[self.action_column_name] if pd.notna(row[self.action_column_name]) and row[self.action_column_name] else action_text
 
                         action_id = self.get_action_id(action_text, actions_db)
-
                         if action_id:
+
+                            prod_ind = row[self.prod_ind_column_name] if row[self.prod_ind_column_name] and pd.notna(row[self.prod_ind_column_name]) else ""
+                            obs = row[self.prod_obs_column_name] if row[self.prod_obs_column_name] and pd.notna(row[self.prod_obs_column_name]) else ""
 
                             normalize_data = self.tools.normalize_text(row[self.milestone_column_name])
 
                             data = {'normalize': normalize_data, 'original': row[self.milestone_column_name], 
-                                    "action": action_id, "prod_ind": row[self.prod_ind_column_name]}
+                                    "action": action_id, "prod_ind": prod_ind, "obs": obs}
+                            
                 
                             data_to_save.append(data)
                         
@@ -114,9 +118,9 @@ class MilestoneT(TransformData):
 
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and action_id != row["action"] for text, action_id, _ in existing_data)):
+                        or any(text == row["normalize"] and action_id != row["action"] for text, action_id in existing_data)):
 
-                        milestone = Milestone(name=row["original"], action_id=row["action"], producto_indicator=row["prod_ind"])
+                        milestone = Milestone(name=row["original"], action_id=row["action"], product_indc=row["prod_ind"], obs=row["obs"]  )
                         self.load.add_to_session(milestone)
                         new_log.append(row["original"])
                         log_data.append(milestone)
@@ -149,7 +153,6 @@ class MilestoneT(TransformData):
 
     def get_action_id(self, text, action_db):
         
-
         normalized_action_db = set((self.tools.normalize_text(row.name), row.id) for row in action_db)
 
         text = self.tools.normalize_text(text)
