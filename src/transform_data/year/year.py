@@ -53,7 +53,7 @@ class YearT(TransformData):
         try: 
 
             existing_year = self.load.session.query(Year.value).all()
-            existing_year = set(self.tools.normalize_text(row[0]) for row in existing_year)
+            existing_year = set(self.tools.normalize_text(str(row[0])) for row in existing_year)
             return existing_year
 
         except Exception as e:
