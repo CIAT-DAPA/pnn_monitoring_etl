@@ -4,3 +4,4 @@ from .product import ProductT
 from .institution import InstitutionT
 from .milestone import MilestoneT
 from .responsible import ResponsibleT
+from .objective import ObjectiveT

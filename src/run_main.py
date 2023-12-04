@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ResponsibleT
+from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT
 from load import LoadData
 
 class ETLMaster():
@@ -47,7 +47,10 @@ class ETLMaster():
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
-            
+
+            objective = ObjectiveT(data, load)
+            objective.run_objective()
+
             product = ProductT(data, load)
             product.run_products()
 

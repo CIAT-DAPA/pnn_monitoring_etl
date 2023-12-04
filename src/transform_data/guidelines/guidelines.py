@@ -44,8 +44,8 @@ class GuidelineT(TransformData):
 
                         else:
 
-                            data = {'original': row[self.milestone_column_name], "prod_ind": row[self.prod_ind_column_name], 
-                                    "row": index, "column": self.milestone_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+                            data = {'original': row[self.guideline_column_name], "prod_ind": row[self.objective_column_name], 
+                                    "row": index, "column": self.guideline_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
 
                             self.data_with_error.append(data)
                         
