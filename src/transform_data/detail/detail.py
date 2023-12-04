@@ -183,7 +183,7 @@ class DetailT(TransformData):
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
         else:
-            msg_error = f"No hay acciones a los cuales relacionar los detalles, por lo que no se pudo guardar los detalles\n"
+            msg_error = f"No hay hitos a los cuales relacionar los detalles, por lo que no se pudo guardar los detalles\n"
             self.tools.write_log(msg_error, self.log_error_file)
             print(msg_error)
 
