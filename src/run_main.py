@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT
+from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT, ActionT
 from load import LoadData
 
 class ETLMaster():
@@ -54,6 +54,9 @@ class ETLMaster():
 
             guideline = GuidelineT(data, load)
             guideline.run_guidelines()
+
+            action = ActionT(data, load)
+            action.run_actions()
 
             institution = InstitutionT(data, load)
             institution.run_institution()
