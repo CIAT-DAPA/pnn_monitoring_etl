@@ -8,3 +8,5 @@ from .year import YearT
 from .detail import DetailT
 from .responsible import ResponsibleT
 from .period import PeriodT
+from .action import ActionT
+from .sirap import SirapT

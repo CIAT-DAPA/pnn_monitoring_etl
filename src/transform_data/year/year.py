@@ -53,7 +53,6 @@ class YearT(TransformData):
         try: 
 
             existing_year = self.load.session.query(Year.value).all()
-            existing_year = set(self.tools.normalize_text(str(row[0])) for row in existing_year)
             return existing_year
 
         except Exception as e:
@@ -70,7 +69,6 @@ class YearT(TransformData):
 
         existing_years = self.obtain_data_from_db()
         new_years = self.obtain_data_from_df()
-
         print("Finalizada la transformación de años")
 
         if existing_years is not None and not new_years.empty:

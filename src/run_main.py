@@ -1,7 +1,7 @@
 import os
 from database import PostgresConnection
 from extract_data import ExtractData
-from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT
+from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT, ActionT, SirapT
 from load import LoadData
 
 class ETLMaster():
@@ -30,11 +30,6 @@ class ETLMaster():
         raw_data.read_data()
         return raw_data
 
-    def transform(self, data):
-        # Implementa la lógica para transformar los datos según tus necesidades
-        processed_data = data  # En este ejemplo, la transformación es mínima
-        return processed_data
-
     def load(self, data):
         # Implementa la lógica para cargar los datos, por ejemplo, a un archivo CSV
         data.to_csv(self.processed_data_path, index=False)
@@ -44,6 +39,9 @@ class ETLMaster():
         self.connection = self.database_connection()
 
         load = LoadData(self.connection.session)
+        
+        sirap = SirapT(load)
+        sirap.run_sirap()
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
@@ -60,20 +58,23 @@ class ETLMaster():
             guideline = GuidelineT(data, load)
             guideline.run_guidelines()
 
+            action = ActionT(data, load)
+            action.run_actions()
+
             institution = InstitutionT(data, load)
             institution.run_institution()
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
 
+            year = YearT(data, load)
+            year.run_year()
+
             detail = DetailT(data, load)
             detail.run_detail()
 
             responsible = ResponsibleT(data, load)
             responsible.run_responsible()
-            
-            year = YearT(data, load)
-            year.run_year()
 
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")
