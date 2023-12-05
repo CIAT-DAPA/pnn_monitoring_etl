@@ -30,11 +30,6 @@ class ETLMaster():
         raw_data.read_data()
         return raw_data
 
-    def transform(self, data):
-        # Implementa la lógica para transformar los datos según tus necesidades
-        processed_data = data  # En este ejemplo, la transformación es mínima
-        return processed_data
-
     def load(self, data):
         # Implementa la lógica para cargar los datos, por ejemplo, a un archivo CSV
         data.to_csv(self.processed_data_path, index=False)
