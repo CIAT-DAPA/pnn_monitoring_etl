@@ -39,12 +39,12 @@ class ETLMaster():
         self.connection = self.database_connection()
 
         load = LoadData(self.connection.session)
+        
+        sirap = SirapT(load)
+        sirap.run_sirap()
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
-
-            sirap = SirapT(data, load)
-            sirap.run_sirap()
 
             objective = ObjectiveT(data, load)
             objective.run_objective()

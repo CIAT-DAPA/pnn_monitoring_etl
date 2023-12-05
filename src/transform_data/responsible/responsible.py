@@ -17,14 +17,12 @@ class ResponsibleT(TransformData):
 
         data_to_save = []
         institution_text = ""
-        detail_text = ""
         try:
             institutions_db = self.load.session.query(Institution.id, Institution.name).all()
             details_db = self.load.session.query(Detail.id, Detail.name).all()
-
             if institutions_db and details_db:
                 for index, row in self.data["data"].iterrows():
-                    if(pd.notna(row[self.column_name_responsible])):
+                    if(pd.notna(row[self.column_name_responsible]) and not row[self.column_name_responsible].isspace()):
                         responsibles=row[self.column_name_responsible]
                         responsibles=responsibles.replace("-", ",").split(",")
                         detail = row[self.column_name_detail]
@@ -77,15 +75,17 @@ class ResponsibleT(TransformData):
         text = self.tools.normalize_text(text)       
         matching_elements = [element for element in normalized_institution_db if text in element]
         if matching_elements:
+            print('id Institution: '+ str(matching_elements[0][1]))
             return matching_elements[0][1]
         else:
             return 0
     
     def get_detail_id(self, text, detail_db):
         normalized_detail_db = set((self.tools.normalize_text(row.name), row.id) for row in detail_db)
-        text = self.tools.normalize_text(text)       
+        text = self.tools.normalize_text(text)
         matching_elements = [element for element in normalized_detail_db if text in element]
         if matching_elements:
+            print('id Detal: '+ str(matching_elements[0][1]))
             return matching_elements[0][1]
         else:
             return 0
@@ -106,13 +106,12 @@ class ResponsibleT(TransformData):
             log_data = []
 
             print("Inicia la carga de Responsible")
-
             try:
                 for index, row in new_responsible.iterrows():
                     if (row["institution_id"], row["detail_id"]) not in existing_responsible:
                         responsible = Responsible(institution_id=int(row["institution_id"]), detail_id=int(row["detail_id"]))
                         self.load.add_to_session(responsible)
-                        new_log.append(row["institution_id"], row["detail_id"])
+                        new_log.append(row["institution_id"])
                         log_data.append(responsible)
                     else:
                         existing_log.append(row["institution_id"])

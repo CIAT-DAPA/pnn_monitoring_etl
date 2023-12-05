@@ -1,13 +1,13 @@
 import pandas as pd
-from transform_data import TransformData
+from tools import Tools
 from enums import ExcelColumns
 from pnn_monitoring_orm import Sirap
 import os
 
-class SirapT(TransformData):
+class SirapT():
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, load):
+        self.tools = Tools()
         self.load = load
         self.log_error_file = "sirap_error_log.txt"
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,8 +62,6 @@ class SirapT(TransformData):
 
         existing_siraps = self.obtain_data_from_db()
         new_siraps = self.obtain_data_from_df()
-        print(new_siraps)
-        print(existing_siraps)
         print("Finalizada la transformación de SIRAP")
 
         if existing_siraps is not None and not new_siraps.empty:
