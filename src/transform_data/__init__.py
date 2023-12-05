@@ -10,3 +10,4 @@ from .responsible import ResponsibleT
 from .period import PeriodT
 from .action import ActionT
 from .sirap import SirapT
+from .actor import ActorT
