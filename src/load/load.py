@@ -2,11 +2,13 @@ from datetime import datetime
 import csv
 import os
 from sqlalchemy.inspection import inspect
+from tools import Tools
 
 class LoadData():
 
 
     def __init__(self, session):
+        self.tools = Tools()
         self.grandparent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
         self.output_path = os.path.join(self.grandparent_dir, "outputs")
         actu_date = datetime.now()

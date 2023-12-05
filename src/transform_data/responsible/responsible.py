@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Responsible, Institution, Detail
+from pnn_monitoring_orm import Responsible, Institution, Detail, Milestone
 
 class ResponsibleT(TransformData):
 
@@ -9,24 +9,35 @@ class ResponsibleT(TransformData):
         super().__init__(data)
         self.column_name_responsible = ExcelColumns.RESPONSIBLE.value 
         self.column_name_detail = ExcelColumns.DETAIL.value 
+        self.column_name_milestone = ExcelColumns.MILESTONE.value 
         self.load = load
         self.log_error_file = "responsible_error_log.txt"
-        self.check_columns([self.column_name_responsible, self.column_name_detail])
+        self.check_columns([self.column_name_responsible, self.column_name_detail, self.column_name_milestone])
     
     def obtain_data_from_df(self):
 
         data_to_save = []
         institution_text = ""
+        milestone_text = ""
         try:
             institutions_db = self.load.session.query(Institution.id, Institution.name).all()
-            details_db = self.load.session.query(Detail.id, Detail.name).all()
-            if institutions_db and details_db:
+            details_db = self.load.session.query(
+                Detail.id,
+                Detail.name,
+                Milestone.id.label("milestone_id"),
+                Milestone.name.label("milestone_name") 
+            ).join(
+                Milestone, 
+                Detail.milestone_id == Milestone.id  
+            ).all()
+            if institutions_db and details_db :
                 for index, row in self.data["data"].iterrows():
                     if(pd.notna(row[self.column_name_responsible]) and not row[self.column_name_responsible].isspace()):
                         responsibles=row[self.column_name_responsible]
                         responsibles=responsibles.replace("-", ",").split(",")
+                        milestone_text = row[self.column_name_milestone] if pd.notna(row[self.column_name_milestone]) and row[self.column_name_milestone] else milestone_text
                         detail = row[self.column_name_detail]
-                        detail_id = self.get_detail_id(detail, details_db)
+                        detail_id = self.get_detail_id(detail,milestone_text, details_db)
                         for data in responsibles:
                             data = {'normalize': self.tools.normalize_text(data), 'original': data}
                             institution_text = data['original']
@@ -75,29 +86,31 @@ class ResponsibleT(TransformData):
         text = self.tools.normalize_text(text)       
         matching_elements = [element for element in normalized_institution_db if text in element]
         if matching_elements:
-            print('id Institution: '+ str(matching_elements[0][1]))
             return matching_elements[0][1]
         else:
             return 0
-    
-    def get_detail_id(self, text, detail_db):
-        normalized_detail_db = set((self.tools.normalize_text(row.name), row.id) for row in detail_db)
+        
+    def get_detail_id(self, text, milestone_text, detail_db):
+        normalized_detail_db = set((row.id, self.tools.normalize_text(row.name), row.milestone_id, self.tools.normalize_text(row.milestone_name)) for row in detail_db)
         text = self.tools.normalize_text(text)
-        matching_elements = [element for element in normalized_detail_db if text in element]
+        milestone_text = self.tools.normalize_text(milestone_text)
+        matching_elements = [element for element in normalized_detail_db if text in element and milestone_text in element]
         if matching_elements:
-            print('id Detal: '+ str(matching_elements[0][1]))
-            return matching_elements[0][1]
+            return matching_elements[0][0]
         else:
             return 0
         
     def run_responsible(self):
 
-        print("\nInicia la transformación de Responsible")
+        print("\nInicia la transformación de los responsables")
 
         existing_responsible = self.obtain_data_from_db()
         new_responsible = self.obtain_data_from_df()
 
-        print("Finalizada la transformación de Responsible")
+        # print("existing: "+ str(existing_responsible))
+        # print("new: "+ str(new_responsible))
+
+        print("Finalizada la transformación de los responsables")
 
         if existing_responsible is not None and not new_responsible.empty:
 
@@ -105,7 +118,7 @@ class ResponsibleT(TransformData):
             existing_log = []
             log_data = []
 
-            print("Inicia la carga de Responsible")
+            print("Inicia la carga de los responsables")
             try:
                 for index, row in new_responsible.iterrows():
                     if (row["institution_id"], row["detail_id"]) not in existing_responsible:
@@ -119,14 +132,14 @@ class ResponsibleT(TransformData):
                 if log_data:
                     self.load.load_to_db(log_data)
 
-                msg = f'''Carga de Responsible exitosa
-                Nuevas Responsible guardados: {len(new_log)}
-                Responsible ya existentes en la base de datos: {len(existing_log)}\n'''
+                msg = f'''Carga de los responsables exitosa
+                Nuevas responsables guardados: {len(new_log)}
+                Responsables ya existentes en la base de datos: {len(existing_log)}\n'''
                 print(msg)
 
                 self.tools.write_log(msg, "output.txt", True)
 
             except Exception as e:
-                msg_error = f"Error al guardar las Responsible: {str(e)}\n"
+                msg_error = f"Error al guardar los responsables: {str(e)}\n"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
