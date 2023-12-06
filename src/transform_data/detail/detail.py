@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Detail, Milestone, Period, Product, Time, Year
+from pnn_monitoring_orm import Detail, Milestone, Period, Product, Time, Year, Guideline, Action
 from datetime import datetime
 
 class DetailT(TransformData):
@@ -36,7 +36,18 @@ class DetailT(TransformData):
 
         try:
 
-            milestone_db = self.load.session.query(Milestone.id, Milestone.name).all()
+            milestone_db = self.load.session.query(
+                Milestone.id,
+                Milestone.name, 
+                Guideline.sirap_id,
+            ).join(
+                Action,
+                Action.id == Milestone.action_id
+            ).join(
+                Guideline,
+                Guideline.id == Action.guideline_id
+            ).all()
+
             period_db = self.load.session.query(Period.id, Period.name).all()
             product_db = self.load.session.query(Product.id, Product.name).all()
 
@@ -50,7 +61,7 @@ class DetailT(TransformData):
                         product_text = row[self.product_column_name] if pd.notna(row[self.product_column_name]) and row[self.product_column_name] else product_text
                             
 
-                        milestone_id = self.get_match_id(milestone_text, milestone_db)
+                        milestone_id = self.get_match_id(milestone_text, milestone_db, True)
                         period_id = self.get_match_id(period_text, period_db)
                         product_id = self.get_match_id(product_text, product_db)
 
@@ -121,9 +132,22 @@ class DetailT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Detail.name, Detail.milestone_id).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.milestone_id) for row in existing_products)
-            return existing_products
+            existing_details = self.load.session.query(
+                Detail.name, 
+                Detail.milestone_id,
+                Guideline.sirap_id
+            ).join(
+                Milestone,
+                Milestone.id == Detail.milestone_id
+            ).join(
+                Action,
+                Action.id == Milestone.action_id
+            ).join(
+                Guideline,
+                Guideline.id == Action.guideline_id
+            ).all()
+            existing_details = set((self.tools.normalize_text(row.name), row.milestone_id, row.sirap_id) for row in existing_details)
+            return existing_details
 
         except Exception as e:
             msg_error = f"Error en la tabla Detail al intentar obtener los datos: {str(e)}"
@@ -156,7 +180,7 @@ class DetailT(TransformData):
         existing_data = self.obtain_data_from_db()
         new_data = self.obtain_data_from_df()
         years = self.obtain_years_from_db()
-
+        ac_sirap_id = self.data["id"]
 
         if existing_data is not None and not new_data.empty and years is not None:
 
@@ -170,11 +194,13 @@ class DetailT(TransformData):
 
             try:
 
-                existing_text_set = {text for text, _ in existing_data}
+                existing_text_set = {name for name, _, _ in existing_data}
                 
+
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or not any(text == row["normalize"] and milestone_id == row["milestone_id"] for text, milestone_id in existing_data)):
+                        or not any(name == row["normalize"] and milestone_id == row["milestone_id"] and sirap_id == ac_sirap_id 
+                                   for name, milestone_id, sirap_id in existing_data)):
 
                         detail = Detail(name=row["original"], milestone_id=row["milestone_id"], product_id=row["product_id"], period_id=row["period_id"],
                                         amount=row["amount"], quantity=row["quantity"], goal=row["goal"], implemented_value=row["imp_value"],
@@ -188,17 +214,18 @@ class DetailT(TransformData):
                         existing_log.append(row["original"])
                     
                 if log_data:
-                    
+
                     self.load.load_to_db(log_data)
 
                 print("Inicia la carga de la relación de detalles y años")
                 for index, data in enumerate(log_data):
-                    for year in new_data.at[index, "annuity"]:
+                    for year in new_data.iloc[index]["annuity"]:
                         filtered_year = [id for id, value in years if value == year][0]
                         time = Time(year_id=filtered_year, detail_id=data.id)
                         self.load.add_to_session(time)
                         new_time_log.append(year)
                         log_time.append(time)
+                    
                 
                 if log_time:
                     
@@ -236,13 +263,19 @@ class DetailT(TransformData):
             validation = True
         return validation
 
-    def get_match_id(self, text, data_db):
-        
-        normalized_data_db = set((self.tools.normalize_text(row.name), row.id) for row in data_db)
+    def get_match_id(self, text, data_db, milestone=False):
 
+        matching_elements = []
         text = self.tools.normalize_text(text)
-        
-        matching_elements = [element for element in normalized_data_db if text in element]
+        ac_sirap_id = self.data["id"]
+
+        if milestone:
+
+            normalized_data_db = set((self.tools.normalize_text(row.name), row.id, row.sirap_id) for row in data_db)
+            matching_elements = [element for element in normalized_data_db if text in element and ac_sirap_id == element[2]]
+        else:
+            normalized_data_db = set((self.tools.normalize_text(row.name), row.id) for row in data_db)
+            matching_elements = [element for element in normalized_data_db if text in element]
 
         if matching_elements:
             return matching_elements[0][1]

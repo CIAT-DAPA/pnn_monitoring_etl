@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Responsible, Institution, Detail, Milestone
+from pnn_monitoring_orm import Responsible, Institution, Detail, Milestone, Action, Guideline
 
 class ResponsibleT(TransformData):
 
@@ -25,10 +25,17 @@ class ResponsibleT(TransformData):
                 Detail.id,
                 Detail.name,
                 Milestone.id.label("milestone_id"),
-                Milestone.name.label("milestone_name") 
+                Milestone.name.label("milestone_name"),
+                Guideline.sirap_id
             ).join(
-                Milestone, 
-                Detail.milestone_id == Milestone.id  
+                Milestone,
+                Milestone.id == Detail.milestone_id
+            ).join(
+                Action,
+                Action.id == Milestone.action_id
+            ).join(
+                Guideline,
+                Guideline.id == Action.guideline_id
             ).all()
             if institutions_db and details_db :
                 for index, row in self.data["data"].iterrows():
@@ -70,7 +77,19 @@ class ResponsibleT(TransformData):
 
         try: 
 
-            existing_responsible = self.load.session.query(Responsible.institution_id, Responsible.detail_id).all()
+            existing_responsible = self.load.session.query(Responsible.institution_id, Responsible.detail_id, Guideline.sirap_id).join(
+                Detail,
+                Detail.id == Responsible.detail_id
+            ).join(
+                Milestone,
+                Milestone.id == Detail.milestone_id
+            ).join(
+                Action,
+                Action.id == Milestone.action_id
+            ).join(
+                Guideline,
+                Guideline.id == Action.guideline_id
+            ).all()
             return existing_responsible
 
         except Exception as e:
@@ -91,10 +110,10 @@ class ResponsibleT(TransformData):
             return 0
         
     def get_detail_id(self, text, milestone_text, detail_db):
-        normalized_detail_db = set((row.id, self.tools.normalize_text(row.name), row.milestone_id, self.tools.normalize_text(row.milestone_name)) for row in detail_db)
+        normalized_detail_db = set((row.id, self.tools.normalize_text(row.name), row.milestone_id, self.tools.normalize_text(row.milestone_name), row.sirap_id) for row in detail_db)
         text = self.tools.normalize_text(text)
         milestone_text = self.tools.normalize_text(milestone_text)
-        matching_elements = [element for element in normalized_detail_db if text in element and milestone_text in element]
+        matching_elements = [element for element in normalized_detail_db if text in element and milestone_text in element and element[4] == self.data["id"]]
         if matching_elements:
             return matching_elements[0][0]
         else:
@@ -107,9 +126,6 @@ class ResponsibleT(TransformData):
         existing_responsible = self.obtain_data_from_db()
         new_responsible = self.obtain_data_from_df()
 
-        # print("existing: "+ str(existing_responsible))
-        # print("new: "+ str(new_responsible))
-
         print("Finalizada la transformación de los responsables")
 
         if existing_responsible is not None and not new_responsible.empty:
@@ -121,7 +137,7 @@ class ResponsibleT(TransformData):
             print("Inicia la carga de los responsables")
             try:
                 for index, row in new_responsible.iterrows():
-                    if (row["institution_id"], row["detail_id"]) not in existing_responsible:
+                    if (row["institution_id"], row["detail_id"], self.data["id"]) not in existing_responsible:
                         responsible = Responsible(institution_id=int(row["institution_id"]), detail_id=int(row["detail_id"]))
                         self.load.add_to_session(responsible)
                         new_log.append(row["institution_id"])

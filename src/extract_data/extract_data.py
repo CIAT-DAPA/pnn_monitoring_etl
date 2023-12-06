@@ -47,7 +47,7 @@ class ExtractData():
                             and self.tools.normalize_text(actual_column).index(self.tools.normalize_text(enum_member.value)) == 0
                         }
                         df.rename(columns=column_mapping, inplace=True)
-                        data_with_ids.append({'id': sirap.id, 'data': df})
+                        data_with_ids.append({'id': sirap.id, 'data': df, 'sirap_name': sirap.name})
                         
                     else:
                         msg_error = f"No se encontro el Sirap con el ext_id: {file_name}"

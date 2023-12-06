@@ -48,9 +48,9 @@ class ObjectiveT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Objective.name).all()
-            existing_products = set(self.tools.normalize_text(row[0]) for row in existing_products)
-            return existing_products
+            existing_objectives = self.load.session.query(Objective.name).all()
+            existing_objectives = set(self.tools.normalize_text(row[0]) for row in existing_objectives)
+            return existing_objectives
 
         except Exception as e:
             msg_error = f"Error en la tabla Objetive al intentar obtener los datos: {str(e)}"

@@ -31,7 +31,7 @@ class ETLMaster():
         return raw_data
 
     def load(self, data):
-        # Implementa la lógica para cargar los datos, por ejemplo, a un archivo CSV
+
         data.to_csv(self.processed_data_path, index=False)
 
     def run_etl(self):
@@ -46,6 +46,7 @@ class ETLMaster():
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
 
+            print(f'------------------------------   Iniciando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
             objective = ObjectiveT(data, load)
             objective.run_objective()
 
@@ -79,9 +80,11 @@ class ETLMaster():
             actor = ActorT(data, load)
             actor.run_actor()
 
-        self.connection.disconnect()
-        print("Proceso ETL completado con éxito.")
+            print(f'------------------------------   Finalizando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
 
-# Uso de la clase ETLMaster
+        self.connection.disconnect()
+        print("Proceso ETL completado.")
+
+
 etl_master = ETLMaster()
 etl_master.run_etl()

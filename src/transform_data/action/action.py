@@ -24,7 +24,7 @@ class ActionT(TransformData):
 
         try:
 
-            guidelines_db = self.load.session.query(Guideline.id, Guideline.name).all()
+            guidelines_db = self.load.session.query(Guideline.id, Guideline.name, Guideline.sirap_id).all()
 
             if guidelines_db:
 
@@ -80,9 +80,16 @@ class ActionT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Action.name, Action.guideline_id, Action.action_indc).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.guideline_id, row.action_indc) for row in existing_products)
-            return existing_products
+            existing_actions = self.load.session.query(
+                Action.name, 
+                Action.guideline_id,
+                Guideline.sirap_id
+            ).join(
+                Guideline, 
+                Guideline.id == Action.guideline_id
+            ).all()
+            existing_actions = set((self.tools.normalize_text(row.name), row.guideline_id, row.sirap_id) for row in existing_actions)
+            return existing_actions
 
         except Exception as e:
             msg_error = f"Error en la tabla Action al intentar obtener los datos: {str(e)}"
@@ -95,11 +102,11 @@ class ActionT(TransformData):
 
         print("\nInicia la transformación de las acciones")
 
-        existing_products = self.obtain_data_from_db()
-        new_products = self.obtain_data_from_df()
+        existing_actions = self.obtain_data_from_db()
+        new_actions = self.obtain_data_from_df()
 
 
-        if existing_products is not None and not new_products.empty:
+        if existing_actions is not None and not new_actions.empty:
 
             new_log = []
             existing_log = []
@@ -109,11 +116,12 @@ class ActionT(TransformData):
 
             try:
 
-                existing_text_set = {text for text, _, _ in existing_products}
+                ac_sirap_id = self.data["id"]
+                existing_text_set = {text for text, _, _ in existing_actions}
 
-                for index, row in new_products.iterrows():
+                for index, row in new_actions.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and guideline_id != row["guideline"] for text, guideline_id, _ in existing_products)):
+                        or not any(text == row["normalize"] and guideline_id == row["guideline"] and sirap_id == ac_sirap_id for text, guideline_id, sirap_id in existing_actions)):
 
                         action = Action(name=row["original"], guideline_id=row["guideline"], action_indc=row["action_indc"])
                         self.load.add_to_session(action)
@@ -149,12 +157,12 @@ class ActionT(TransformData):
 
     def get_guideline_id(self, text, guidelines_db):
         
-
-        normalized_guidelines_db = set((self.tools.normalize_text(row.name), row.id) for row in guidelines_db)
+        ac_sirap_id = self.data["id"]
+        normalized_guidelines_db = set((self.tools.normalize_text(row.name), row.id, row.sirap_id ) for row in guidelines_db)
 
         text = self.tools.normalize_text(text)
         
-        matching_elements = [element for element in normalized_guidelines_db if text in element]
+        matching_elements = [element for element in normalized_guidelines_db if text in element and ac_sirap_id == element[2]]
 
         if matching_elements:
             return matching_elements[0][1]

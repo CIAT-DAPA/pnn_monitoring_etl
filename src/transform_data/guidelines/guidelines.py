@@ -77,9 +77,9 @@ class GuidelineT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Guideline.name, Guideline.objective_id, Guideline.sirap_id).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.objective_id, row.sirap_id) for row in existing_products)
-            return existing_products
+            existing_guidelines = self.load.session.query(Guideline.name, Guideline.objective_id, Guideline.sirap_id).all()
+            existing_guidelines = set((self.tools.normalize_text(row.name), row.objective_id, row.sirap_id) for row in existing_guidelines)
+            return existing_guidelines
 
         except Exception as e:
             msg_error = f"Error en la tabla Guideline al intentar obtener los datos: {str(e)}"
@@ -92,11 +92,11 @@ class GuidelineT(TransformData):
 
         print("\nInicia la transformación de lineamientos")
 
-        existing_products = self.obtain_data_from_db()
-        new_products = self.obtain_data_from_df()
+        existing_guidelines = self.obtain_data_from_db()
+        new_guidelines = self.obtain_data_from_df()
 
 
-        if existing_products is not None and not new_products.empty:
+        if existing_guidelines is not None and not new_guidelines.empty:
 
             new_log = []
             existing_log = []
@@ -107,14 +107,14 @@ class GuidelineT(TransformData):
             try:
 
                 ac_sirap_id = self.data["id"]
-                existing_text_set = {text for text, _, _ in existing_products}
+                existing_text_set = {text for text, _, _ in existing_guidelines}
                 
                 
 
-                for index, row in new_products.iterrows():
+                for index, row in new_guidelines.iterrows():
                     if (row["normalize"] not in existing_text_set 
                         or not any(text == row["normalize"] and objective_id == row["objective"] and sirap_id == ac_sirap_id
-                                    for text, objective_id, sirap_id in existing_products)):
+                                    for text, objective_id, sirap_id in existing_guidelines)):
 
                         guideline = Guideline(name=row["original"], objective_id=row["objective"], sirap_id=ac_sirap_id)
                         self.load.add_to_session(guideline)
