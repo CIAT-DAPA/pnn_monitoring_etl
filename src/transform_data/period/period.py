@@ -86,12 +86,16 @@ class PeriodT(TransformData):
                         log_data.append(period)
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna": self.column_name, "Fila": index+1, 
+                                             'Valor':row["original"],
+                                             "Error": f"Este periodo ya se encuentra en la base de datos"})
 
                 if log_data:
                     
                     self.load.load_to_db(log_data, self.data["sirap_name"])
 
+                if len(existing_log) > 0:
+                    self.tools.generate_csv_with_errors(existing_log, self.column_name, self.data["sirap_name"])
 
                 msg = f'''Carga de periodos exitosa
                 Nuevos periodos guardados: {len(new_log)}
