@@ -87,7 +87,7 @@ class SirapT():
 
                 if log_data:
                     
-                    self.load.load_to_db(log_data, self.data["sirap_name"])
+                    self.load.load_to_db(log_data, "")
 
 
                 msg = f'''Carga de SIRAP exitosa
