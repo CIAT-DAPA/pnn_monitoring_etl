@@ -126,9 +126,6 @@ class ResponsibleT(TransformData):
         existing_responsible = self.obtain_data_from_db()
         new_responsible = self.obtain_data_from_df()
 
-        # print("existing: "+ str(existing_responsible))
-        # print("new: "+ str(new_responsible))
-
         print("Finalizada la transformación de los responsables")
 
         if existing_responsible is not None and not new_responsible.empty:
