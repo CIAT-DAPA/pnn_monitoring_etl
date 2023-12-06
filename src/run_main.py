@@ -31,7 +31,7 @@ class ETLMaster():
         return raw_data
 
     def load(self, data):
-        # Implementa la lógica para cargar los datos, por ejemplo, a un archivo CSV
+
         data.to_csv(self.processed_data_path, index=False)
 
     def run_etl(self):
@@ -46,7 +46,7 @@ class ETLMaster():
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
 
-            print(f'------------------------------   Aqui esta la info del Sirap: {data["sirap_name"]}  -------------------------- \n\n')
+            print(f'------------------------------   Iniciando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
             objective = ObjectiveT(data, load)
             objective.run_objective()
 
@@ -62,8 +62,8 @@ class ETLMaster():
             action = ActionT(data, load)
             action.run_actions()
 
-            # institution = InstitutionT(data, load)
-            # institution.run_institution()
+            institution = InstitutionT(data, load)
+            institution.run_institution()
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
@@ -74,15 +74,17 @@ class ETLMaster():
             detail = DetailT(data, load)
             detail.run_detail()
 
-            # responsible = ResponsibleT(data, load)
-            # responsible.run_responsible()
+            responsible = ResponsibleT(data, load)
+            responsible.run_responsible()
 
-            # actor = ActorT(data, load)
-            # actor.run_actor()
+            actor = ActorT(data, load)
+            actor.run_actor()
+
+            print(f'------------------------------   Finalizando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
 
         self.connection.disconnect()
-        print("Proceso ETL completado con éxito.")
+        print("Proceso ETL completado.")
 
-# Uso de la clase ETLMaster
+
 etl_master = ETLMaster()
 etl_master.run_etl()

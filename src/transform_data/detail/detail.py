@@ -37,9 +37,9 @@ class DetailT(TransformData):
         try:
 
             milestone_db = self.load.session.query(
+                Milestone.id,
                 Milestone.name, 
-                Milestone.action_id,
-                Guideline.sirap_id
+                Guideline.sirap_id,
             ).join(
                 Action,
                 Action.id == Milestone.action_id
@@ -180,6 +180,7 @@ class DetailT(TransformData):
         existing_data = self.obtain_data_from_db()
         new_data = self.obtain_data_from_df()
         years = self.obtain_years_from_db()
+        ac_sirap_id = self.data["id"]
 
         if existing_data is not None and not new_data.empty and years is not None:
 
@@ -193,13 +194,13 @@ class DetailT(TransformData):
 
             try:
 
-                existing_text_set = {text for text, _, _ in existing_data}
-                ac_sirap_id = self.data["id"]
+                existing_text_set = {name for name, _, _ in existing_data}
+                
 
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or not any(text == row["normalize"] and milestone_id == row["milestone_id"] and sirap_id == ac_sirap_id 
-                                   for text, milestone_id, sirap_id in existing_data)):
+                        or not any(name == row["normalize"] and milestone_id == row["milestone_id"] and sirap_id == ac_sirap_id 
+                                   for name, milestone_id, sirap_id in existing_data)):
 
                         detail = Detail(name=row["original"], milestone_id=row["milestone_id"], product_id=row["product_id"], period_id=row["period_id"],
                                         amount=row["amount"], quantity=row["quantity"], goal=row["goal"], implemented_value=row["imp_value"],
@@ -214,18 +215,17 @@ class DetailT(TransformData):
                     
                 if log_data:
 
-                    print(log_data)
-                    
                     self.load.load_to_db(log_data)
 
                 print("Inicia la carga de la relación de detalles y años")
                 for index, data in enumerate(log_data):
-                    for year in new_data.at[index, "annuity"]:
+                    for year in new_data.iloc[index]["annuity"]:
                         filtered_year = [id for id, value in years if value == year][0]
                         time = Time(year_id=filtered_year, detail_id=data.id)
                         self.load.add_to_session(time)
                         new_time_log.append(year)
                         log_time.append(time)
+                    
                 
                 if log_time:
                     
@@ -271,7 +271,7 @@ class DetailT(TransformData):
 
         if milestone:
 
-            normalized_data_db = set((self.tools.normalize_text(row.name), row.action_id, row.sirap_id) for row in data_db)
+            normalized_data_db = set((self.tools.normalize_text(row.name), row.id, row.sirap_id) for row in data_db)
             matching_elements = [element for element in normalized_data_db if text in element and ac_sirap_id == element[2]]
         else:
             normalized_data_db = set((self.tools.normalize_text(row.name), row.id) for row in data_db)
