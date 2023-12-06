@@ -24,7 +24,7 @@ class ActionT(TransformData):
 
         try:
 
-            guidelines_db = self.load.session.query(Guideline.id, Guideline.name).all()
+            guidelines_db = self.load.session.query(Guideline.id, Guideline.name, Guideline.sirap_id).all()
 
             if guidelines_db:
 
@@ -80,8 +80,15 @@ class ActionT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Action.name, Action.guideline_id, Action.action_indc).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.guideline_id, row.action_indc) for row in existing_products)
+            existing_products = self.load.session.query(
+                Action.name, 
+                Action.guideline_id,
+                Guideline.sirap_id
+            ).join(
+                Guideline, 
+                Guideline.id == Action.guideline_id
+            ).all()
+            existing_products = set((self.tools.normalize_text(row.name), row.guideline_id, row.sirap_id) for row in existing_products)
             return existing_products
 
         except Exception as e:
@@ -109,11 +116,12 @@ class ActionT(TransformData):
 
             try:
 
+                ac_sirap_id = self.data["id"]
                 existing_text_set = {text for text, _, _ in existing_products}
 
                 for index, row in new_products.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or any(text == row["normalize"] and guideline_id != row["guideline"] for text, guideline_id, _ in existing_products)):
+                        or not any(text == row["normalize"] and guideline_id == row["guideline"] and sirap_id == ac_sirap_id for text, guideline_id, sirap_id in existing_products)):
 
                         action = Action(name=row["original"], guideline_id=row["guideline"], action_indc=row["action_indc"])
                         self.load.add_to_session(action)
@@ -149,12 +157,12 @@ class ActionT(TransformData):
 
     def get_guideline_id(self, text, guidelines_db):
         
-
-        normalized_guidelines_db = set((self.tools.normalize_text(row.name), row.id) for row in guidelines_db)
+        ac_sirap_id = self.data["id"]
+        normalized_guidelines_db = set((self.tools.normalize_text(row.name), row.id, row.sirap_id ) for row in guidelines_db)
 
         text = self.tools.normalize_text(text)
         
-        matching_elements = [element for element in normalized_guidelines_db if text in element]
+        matching_elements = [element for element in normalized_guidelines_db if text in element and ac_sirap_id == element[2]]
 
         if matching_elements:
             return matching_elements[0][1]
