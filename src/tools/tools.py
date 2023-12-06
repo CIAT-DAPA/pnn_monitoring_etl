@@ -39,11 +39,11 @@ class Tools():
             f.write(f"{datetime.now()}: {message}\n")
 
 
-    def generate_csv_with_errors(self, data, tittle):
+    def generate_csv_with_errors(self, data, tittle, sirap_name):
 
         try:
 
-            file_name = f"{tittle}{self.csv_file_error}"
+            file_name = f"{sirap_name}_{tittle}{self.csv_file_error}"
 
             mode = "a" if os.path.isfile(os.path.join(self.log_path,file_name)) else "w"
 
