@@ -46,6 +46,7 @@ class ETLMaster():
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
 
+            print(f'------------------------------   Aqui esta la info del Sirap: {data["sirap_name"]}  -------------------------- \n\n')
             objective = ObjectiveT(data, load)
             objective.run_objective()
 
@@ -61,8 +62,8 @@ class ETLMaster():
             action = ActionT(data, load)
             action.run_actions()
 
-            institution = InstitutionT(data, load)
-            institution.run_institution()
+            # institution = InstitutionT(data, load)
+            # institution.run_institution()
 
             milestone = MilestoneT(data, load)
             milestone.run_milestone()
@@ -73,11 +74,11 @@ class ETLMaster():
             detail = DetailT(data, load)
             detail.run_detail()
 
-            responsible = ResponsibleT(data, load)
-            responsible.run_responsible()
+            # responsible = ResponsibleT(data, load)
+            # responsible.run_responsible()
 
-            actor = ActorT(data, load)
-            actor.run_actor()
+            # actor = ActorT(data, load)
+            # actor.run_actor()
 
         self.connection.disconnect()
         print("Proceso ETL completado con éxito.")
