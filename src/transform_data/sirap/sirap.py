@@ -88,10 +88,10 @@ class SirapT():
 
                 if log_data:
                     
-                    self.load.load_to_db(log_data, self.data["sirap_name"])
+                    self.load.load_to_db(log_data, "")
 
                 if len(existing_log) > 0:
-                    self.tools.generate_csv_with_errors(existing_log, "SIRAP")
+                    self.tools.generate_csv_with_errors(existing_log, "")
 
                 msg = f'''Carga de SIRAP exitosa
                 Nuevos SIRAP guardados: {len(new_log)}
