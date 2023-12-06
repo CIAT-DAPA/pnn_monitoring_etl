@@ -99,7 +99,7 @@ class DetailT(TransformData):
                                 imp_value_msg = " El valor implementado esta vacio o no corresponde al tipo de dato aceptado  " if imp_value is False else ""
                                 annuity_msg = " La anualidad esta vacia o no corresponde al tipo de dato aceptado  " if not annuity or len(annuity) == 0 else ""
 
-                                data = {"Columna": self.detail_column_name, "Fila": index, 
+                                data = {"Columna": self.detail_column_name, "Fila": index+1, 
                                         'Valor': row[self.detail_column_name],
                                         "Error": f"Los valores del registro no corresponden a los adecuados:{amount_msg}{quantity_msg}{goal_msg}{base_line_msg}{imp_value_msg}{annuity_msg}"}
 
@@ -111,7 +111,7 @@ class DetailT(TransformData):
                             msg_pro = " No se encontro la relación con el producto " if period_id == 0 else ""
                             msg_per = " No se encontro la relación con el periodo " if period_id == 0 else ""
 
-                            data = {"Columna": self.detail_column_name, "Fila": index,
+                            data = {"Columna": self.detail_column_name, "Fila": index+1,
                                     "Valor": row[self.detail_column_name],
                                     "Error": f"No se encontro la dependencia a la cual esta relacionado:{msg_mile}{msg_pro}{msg_per}"}
 
@@ -195,6 +195,7 @@ class DetailT(TransformData):
         years = self.obtain_years_from_db()
         ac_sirap_id = self.data["id"]
 
+
         if existing_data is not None and not new_data.empty and years is not None:
 
             new_log = []
@@ -224,7 +225,7 @@ class DetailT(TransformData):
 
                     else:
 
-                        existing_log.append({"Columna": self.detail_column_name, "Fila": index, 
+                        existing_log.append({"Columna": self.detail_column_name, "Fila": index+1, 
                                              'Valor':row["original"],
                                              "Error": f"Este registro ya se encuentra en la base de datos"})
                     
@@ -281,7 +282,7 @@ class DetailT(TransformData):
 
         validation = False
 
-        if (type(data) == "int" or type(data) == "float") and type_of == 1 and ((data and pd.notna(data)) or data == 0):
+        if (isinstance(data, int) or isinstance(data, float)) and type_of == 1 and ((data and pd.notna(data)) or data == 0):
             validation = True
         elif type_of == 0 and data and pd.notna(data):
             validation = True
