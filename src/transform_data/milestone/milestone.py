@@ -1,7 +1,7 @@
 import pandas as pd
 from transform_data import TransformData
 from enums import ExcelColumns
-from pnn_monitoring_orm import Milestone, Action
+from pnn_monitoring_orm import Milestone, Action, Guideline
 
 class MilestoneT(TransformData):
 
@@ -25,7 +25,7 @@ class MilestoneT(TransformData):
 
         try:
 
-            actions_db = self.load.session.query(Action.id, Action.name).all()
+            actions_db = self.load.session.query(Action.id, Action.name, Action.guideline_id, Guideline.sirap_id).join(Guideline, Guideline.id == Action.guideline_id).all()
 
             if actions_db:
 
@@ -83,8 +83,18 @@ class MilestoneT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(Milestone.name, Milestone.action_id).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.action_id) for row in existing_products)
+            existing_products = self.load.session.query(
+                Milestone.name, 
+                Milestone.action_id, 
+                Guideline.sirap_id
+            ).join(
+                Action,
+                Action.id == Milestone.action_id
+            ).join(
+                Guideline,
+                Guideline.id == Action.guideline_id
+            ).all()
+            existing_products = set((self.tools.normalize_text(row.name), row.action_id, row.sirap_id) for row in existing_products)
             return existing_products
 
         except Exception as e:
@@ -112,14 +122,14 @@ class MilestoneT(TransformData):
 
             try:
 
-                existing_text_set = {text for text, _ in existing_data}
+                existing_text_set = {text for text, _, _ in existing_data}
                 
-                
+                ac_sirap_id = self.data["id"]
 
                 for index, row in new_data.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or not any(text == row["normalize"] and action_id == row["action"]
-                                    for text, action_id in existing_data)):
+                        or not any(text == row["normalize"] and action_id == row["action"] and sirap_id == ac_sirap_id
+                                    for text, action_id, sirap_id in existing_data)):
 
                         milestone = Milestone(name=row["original"], action_id=row["action"], product_indc=row["prod_ind"], obs=row["obs"]  )
                         self.load.add_to_session(milestone)
@@ -154,11 +164,12 @@ class MilestoneT(TransformData):
 
     def get_action_id(self, text, action_db):
         
-        normalized_action_db = set((self.tools.normalize_text(row.name), row.id) for row in action_db)
+        ac_sirap_id = self.data["id"]
+        normalized_action_db = set((self.tools.normalize_text(row.name), row.id, row.sirap_id) for row in action_db)
 
         text = self.tools.normalize_text(text)
         
-        matching_elements = [element for element in normalized_action_db if text in element]
+        matching_elements = [element for element in normalized_action_db if text in element and ac_sirap_id == element[2]]
 
         if matching_elements:
             return matching_elements[0][1]
