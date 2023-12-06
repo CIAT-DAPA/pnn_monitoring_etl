@@ -83,7 +83,7 @@ class MilestoneT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(
+            existing_milestones = self.load.session.query(
                 Milestone.name, 
                 Milestone.action_id, 
                 Guideline.sirap_id
@@ -94,8 +94,8 @@ class MilestoneT(TransformData):
                 Guideline,
                 Guideline.id == Action.guideline_id
             ).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.action_id, row.sirap_id) for row in existing_products)
-            return existing_products
+            existing_milestones = set((self.tools.normalize_text(row.name), row.action_id, row.sirap_id) for row in existing_milestones)
+            return existing_milestones
 
         except Exception as e:
             msg_error = f"Error en la tabla Milestone al intentar obtener los datos: {str(e)}"

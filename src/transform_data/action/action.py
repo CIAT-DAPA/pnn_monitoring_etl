@@ -80,7 +80,7 @@ class ActionT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(
+            existing_actions = self.load.session.query(
                 Action.name, 
                 Action.guideline_id,
                 Guideline.sirap_id
@@ -88,8 +88,8 @@ class ActionT(TransformData):
                 Guideline, 
                 Guideline.id == Action.guideline_id
             ).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.guideline_id, row.sirap_id) for row in existing_products)
-            return existing_products
+            existing_actions = set((self.tools.normalize_text(row.name), row.guideline_id, row.sirap_id) for row in existing_actions)
+            return existing_actions
 
         except Exception as e:
             msg_error = f"Error en la tabla Action al intentar obtener los datos: {str(e)}"
@@ -102,11 +102,11 @@ class ActionT(TransformData):
 
         print("\nInicia la transformación de las acciones")
 
-        existing_products = self.obtain_data_from_db()
-        new_products = self.obtain_data_from_df()
+        existing_actions = self.obtain_data_from_db()
+        new_actions = self.obtain_data_from_df()
 
 
-        if existing_products is not None and not new_products.empty:
+        if existing_actions is not None and not new_actions.empty:
 
             new_log = []
             existing_log = []
@@ -117,11 +117,11 @@ class ActionT(TransformData):
             try:
 
                 ac_sirap_id = self.data["id"]
-                existing_text_set = {text for text, _, _ in existing_products}
+                existing_text_set = {text for text, _, _ in existing_actions}
 
-                for index, row in new_products.iterrows():
+                for index, row in new_actions.iterrows():
                     if (row["normalize"] not in existing_text_set 
-                        or not any(text == row["normalize"] and guideline_id == row["guideline"] and sirap_id == ac_sirap_id for text, guideline_id, sirap_id in existing_products)):
+                        or not any(text == row["normalize"] and guideline_id == row["guideline"] and sirap_id == ac_sirap_id for text, guideline_id, sirap_id in existing_actions)):
 
                         action = Action(name=row["original"], guideline_id=row["guideline"], action_indc=row["action_indc"])
                         self.load.add_to_session(action)

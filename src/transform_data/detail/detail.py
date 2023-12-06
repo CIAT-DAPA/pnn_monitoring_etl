@@ -132,7 +132,7 @@ class DetailT(TransformData):
 
         try: 
 
-            existing_products = self.load.session.query(
+            existing_details = self.load.session.query(
                 Detail.name, 
                 Detail.milestone_id,
                 Guideline.sirap_id
@@ -146,8 +146,8 @@ class DetailT(TransformData):
                 Guideline,
                 Guideline.id == Action.guideline_id
             ).all()
-            existing_products = set((self.tools.normalize_text(row.name), row.milestone_id, row.sirap_id) for row in existing_products)
-            return existing_products
+            existing_details = set((self.tools.normalize_text(row.name), row.milestone_id, row.sirap_id) for row in existing_details)
+            return existing_details
 
         except Exception as e:
             msg_error = f"Error en la tabla Detail al intentar obtener los datos: {str(e)}"
