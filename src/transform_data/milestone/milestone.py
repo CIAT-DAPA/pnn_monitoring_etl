@@ -146,14 +146,14 @@ class MilestoneT(TransformData):
                     
                 if log_data:
                     
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
 
 
                 if len(existing_log) > 0 or len(self.data_with_error) > 0:
 
                     data_with_error = existing_log + self.data_with_error
 
-                    self.tools.generate_csv_with_errors(data_with_error, self.milestone_column_name)
+                    self.tools.generate_csv_with_errors(data_with_error, self.milestone_column_name, self.data["sirap_name"])
                 
 
                 msg = f'''Carga de los hitos exitosa

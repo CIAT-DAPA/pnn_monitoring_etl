@@ -146,7 +146,7 @@ class ActorT(TransformData):
                         existing_log.append(row["institution_id"])
 
                 if log_data:
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
 
                 msg = f'''Carga de los actores exitosa
                 Nuevas actores guardados: {len(new_log)}

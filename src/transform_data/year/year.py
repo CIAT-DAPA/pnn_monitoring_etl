@@ -95,7 +95,8 @@ class YearT(TransformData):
                                              "Error": f"Este año ya se encuentra en la base de datos"})
 
                 if log_data:
-                    self.load.load_to_db(log_data)
+                    
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
 
                 if len(existing_log) > 0:
                     self.tools.generate_csv_with_errors(existing_log, self.column_year, self.data["sirap_name"])

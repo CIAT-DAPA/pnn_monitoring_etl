@@ -231,14 +231,14 @@ class DetailT(TransformData):
                     
                 if log_data:
 
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
 
 
                 if len(existing_log) > 0 or len(self.data_with_error) > 0:
 
                     data_with_error = existing_log + self.data_with_error
 
-                    self.tools.generate_csv_with_errors(data_with_error, self.detail_column_name)
+                    self.tools.generate_csv_with_errors(data_with_error, self.detail_column_name, self.data["sirap_name"])
 
 
 
@@ -254,7 +254,7 @@ class DetailT(TransformData):
                 
                 if log_time:
                     
-                    self.load.load_to_db(log_time)
+                    self.load.load_to_db(log_time, self.data["sirap_name"])
 
                 msg = f'''Carga de los detalles exitosa
                 Nuevos detalles guardados: {len(new_log)}

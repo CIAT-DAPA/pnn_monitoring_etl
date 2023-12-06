@@ -21,13 +21,13 @@ class LoadData():
     def add_to_session(self, data):
         self.session.add(data)
 
-    def load_to_db(self,data):
+    def load_to_db(self,data, sirap_name):
 
         try:
 
             self.session.commit()
 
-            file_name =  data[0].__class__.__name__ + self.run_file_name
+            file_name =  sirap_name + "_" + data[0].__class__.__name__ + self.run_file_name
 
             mode = "a" if os.path.isfile(os.path.join(self.output_path,file_name)) else "w"
 
