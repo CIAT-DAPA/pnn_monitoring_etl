@@ -143,10 +143,15 @@ class ResponsibleT(TransformData):
                         new_log.append(row["institution_id"])
                         log_data.append(responsible)
                     else:
-                        existing_log.append(row["institution_id"])
+                        existing_log.append({"Columna": self.column_name_responsible, "Fila": index, 
+                                             'Valor':row["institution_id"],
+                                             "Error": f"Este responsable ya se encuentra en la base de datos"})
 
                 if log_data:
                     self.load.load_to_db(log_data)
+
+                if len(existing_log) > 0:
+                    self.tools.generate_csv_with_errors(existing_log, self.column_name_responsible, self.data["sirap_name"])
 
                 msg = f'''Carga de los responsables exitosa
                 Nuevas responsables guardados: {len(new_log)}
