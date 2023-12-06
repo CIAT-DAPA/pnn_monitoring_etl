@@ -92,15 +92,28 @@ class DetailT(TransformData):
                             
                             else:
 
-                                data = {'original': row[self.detail_column_name], 
-                                    "row": index, "column": self.detail_column_name, "error": f"Los valores del registro no corresponden a los adecuados"}
+                                amount_msg = " El valor del insumo esta vacio o no corresponde al tipo de dato aceptado  " if amount is False else ""
+                                quantity_msg = " La cantidad esta vacia o no corresponde al tipo de dato aceptado  " if quantity is False else ""
+                                goal_msg = " La meta esta vacia o no corresponde al tipo de dato aceptado  " if goal is False else ""
+                                base_line_msg = " La linea base esta vacia o no corresponde al tipo de dato aceptado  " if base_line is False else ""
+                                imp_value_msg = " El valor implementado esta vacio o no corresponde al tipo de dato aceptado  " if imp_value is False else ""
+                                annuity_msg = " La anualidad esta vacia o no corresponde al tipo de dato aceptado  " if not annuity or len(annuity) == 0 else ""
+
+                                data = {"Columna": self.detail_column_name, "Fila": index, 
+                                        'Valor': row[self.detail_column_name],
+                                        "Error": f"Los valores del registro no corresponden a los adecuados:{amount_msg}{quantity_msg}{goal_msg}{base_line_msg}{imp_value_msg}{annuity_msg}"}
 
                                 self.data_with_error.append(data)
                         
                         else:
 
-                            data = {'original': row[self.detail_column_name],
-                                    "row": index, "column": self.detail_column_name, "error": f"No se encontro la dependencia a la cual esta relacionado: milestone_id: {milestone_id}, period_id: {period_id}, product_id: {product_id}"}
+                            msg_mile = " No se encontro la relación con el hito " if milestone_id == 0 else ""
+                            msg_pro = " No se encontro la relación con el producto " if period_id == 0 else ""
+                            msg_per = " No se encontro la relación con el periodo " if period_id == 0 else ""
+
+                            data = {"Columna": self.detail_column_name, "Fila": index,
+                                    "Valor": row[self.detail_column_name],
+                                    "Error": f"No se encontro la dependencia a la cual esta relacionado:{msg_mile}{msg_pro}{msg_per}"}
 
                             self.data_with_error.append(data)
                         
@@ -211,11 +224,22 @@ class DetailT(TransformData):
 
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna": self.detail_column_name, "Fila": index, 
+                                             'Valor':row["original"],
+                                             "Error": f"Este registro ya se encuentra en la base de datos"})
                     
                 if log_data:
 
                     self.load.load_to_db(log_data)
+
+
+                if len(existing_log) > 0 or len(self.data_with_error) > 0:
+
+                    data_with_error = existing_log + self.data_with_error
+
+                    self.tools.generate_csv_with_errors(data_with_error, self.detail_column_name)
+
+
 
                 print("Inicia la carga de la relación de detalles y años")
                 for index, data in enumerate(log_data):
@@ -253,13 +277,13 @@ class DetailT(TransformData):
             print(msg_error)
 
 
-    def validate_data(self, data, type):
+    def validate_data(self, data, type_of):
 
         validation = False
 
-        if type == 1 and ((data and pd.notna(data)) or data == 0):
+        if (type(data) == "int" or type(data) == "float") and type_of == 1 and ((data and pd.notna(data)) or data == 0):
             validation = True
-        elif type == 0 and data and pd.notna(data):
+        elif type_of == 0 and data and pd.notna(data):
             validation = True
         return validation
 
