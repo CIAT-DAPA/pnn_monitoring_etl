@@ -44,8 +44,10 @@ class GuidelineT(TransformData):
 
                         else:
 
-                            data = {'original': row[self.guideline_column_name], "objective": row[self.objective_column_name], 
-                                    "row": index, "column": self.guideline_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+                            data = {"Columna": self.guideline_column_name, "Fila": index+1, 
+                                    'Valor': row[self.guideline_column_name],
+                                    "Objetivo": row[self.objective_column_name],
+                                    "Error": "No se encontro el objetivo al cual esta relacionado en la base de datos"}
 
                             self.data_with_error.append(data)
                         
@@ -122,11 +124,20 @@ class GuidelineT(TransformData):
                         log_data.append(guideline)
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna": self.guideline_column_name, "Fila": index+1, 
+                                             'Valor':row["original"],
+                                             "Objetivo": row["objective"],
+                                             "Error": f"Este registro ya se encuentra en la base de datos"})
                     
                 if log_data:
                     
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
+
+                if len(existing_log) > 0 or len(self.data_with_error) > 0:
+
+                    data_with_error = existing_log + self.data_with_error
+
+                    self.tools.generate_csv_with_errors(data_with_error, self.guideline_column_name, self.data["sirap_name"])
                 
 
                 msg = f'''Carga de lineamientos exitosa

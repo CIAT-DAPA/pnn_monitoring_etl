@@ -90,12 +90,16 @@ class YearT(TransformData):
                         log_data.append(year)
                     else:
 
-                        existing_log.append(row["year"])
+                        existing_log.append({"Columna": self.column_year, "Fila": index, 
+                                             'Valor':row["year"],
+                                             "Error": f"Este año ya se encuentra en la base de datos"})
 
                 if log_data:
                     
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
 
+                if len(existing_log) > 0:
+                    self.tools.generate_csv_with_errors(existing_log, self.column_year, self.data["sirap_name"])
 
                 msg = f'''Carga de años exitosa
                 Nuevos años guardados: {len(new_log)}

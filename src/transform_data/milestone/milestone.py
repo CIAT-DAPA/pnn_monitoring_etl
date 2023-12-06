@@ -50,8 +50,10 @@ class MilestoneT(TransformData):
                         
                         else:
 
-                            data = {'original': row[self.milestone_column_name], "prod_ind": row[self.prod_ind_column_name], 
-                                    "row": index, "column": self.milestone_column_name, "error": "No se encontro la acción a la cual esta relacionado"}
+                            data = {"Columna": self.milestone_column_name, "Fila": index+1, 
+                                             'Valor':row[self.milestone_column_name],
+                                             "Acción": action_text,
+                                             "Error": f"No se encontro la acción a la cual esta relacionado"}
 
                             self.data_with_error.append(data)
                         
@@ -137,11 +139,21 @@ class MilestoneT(TransformData):
                         log_data.append(milestone)
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna": self.milestone_column_name, "Fila": index+1, 
+                                             'Valor':row["original"],
+                                             "Acción": row["action"],
+                                             "Error": f"Este registro ya se encuentra en la base de datos"})
                     
                 if log_data:
                     
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
+
+
+                if len(existing_log) > 0 or len(self.data_with_error) > 0:
+
+                    data_with_error = existing_log + self.data_with_error
+
+                    self.tools.generate_csv_with_errors(data_with_error, self.milestone_column_name, self.data["sirap_name"])
                 
 
                 msg = f'''Carga de los hitos exitosa

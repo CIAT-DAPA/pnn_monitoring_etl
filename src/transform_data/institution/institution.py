@@ -88,11 +88,16 @@ class InstitutionT(TransformData):
                         new_log.append(row["original"])
                         log_data.append(institution)
                     else:
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna actor": self.column_name_actor, "Columna responsable": self.column_name_responsible, "Fila": index, 
+                                             'Valor':row["original"],
+                                             "Error": f"Esta institución ya se encuentra en la base de datos"})
 
                 if log_data:
                     
-                    self.load.load_to_db(log_data)
+                    self.load.load_to_db(log_data, self.data["sirap_name"])
+
+                if len(existing_log) > 0:
+                    self.tools.generate_csv_with_errors(existing_log, "Instituciones", self.data["sirap_name"])
 
                 msg = f'''Carga de instituciones exitosa
                 Nuevas Instituciones guardados: {len(new_log)}
