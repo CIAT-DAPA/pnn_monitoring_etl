@@ -1,7 +1,7 @@
-from etl import ETLMaster
 import os
 import argparse
-
+from etl import ETLMaster
+from rollback import Rollback
 
 def main():
     # Params
@@ -36,7 +36,7 @@ def main():
             parser.error("El argumento -fid es necesario para este tipo de proceso.")
         id = args.fid
         print(f"Iniciando rollback del proceso: {id}\n")
-
+        rollback = Rollback(parent_dir, id)
 
 
 if __name__ == "__main__":
