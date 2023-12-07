@@ -5,9 +5,6 @@ FROM python:3.9-alpine
 WORKDIR /workdir
 
 RUN apk add --no-cache \
-    libffi-dev \
-    gcc \
-    musl-dev \
     libxml2-dev \
     libxslt-dev \
     postgresql-dev \
