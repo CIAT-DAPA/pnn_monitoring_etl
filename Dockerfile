@@ -5,7 +5,7 @@ FROM python:3.9-alpine
 WORKDIR /workdir
 
 # Copia el código fuente y el archivo de requisitos
-COPY src/ /workdir
+COPY src/ /workdir/src
 COPY requirements.txt .
 
 # Instala las dependencias
