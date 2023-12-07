@@ -47,8 +47,9 @@ class ActionT(TransformData):
 
                         else:
 
-                            data = {'original': row[self.action_column_name], "guideline": row[self.guideline_column_name], 
-                                    "row": index, "column": self.action_column_name, "error": "No se encontro la lineamiento al cual esta relacionada"}
+                            data = {"Columna": self.action_column_name, "Fila": index+1,
+                                    'Valor': row['original'], "Linea estrategica": row['guideline'], 
+                                    "Error": "No se encontro la Linea Estrategica a la cual esta relacionada"}
 
                             self.data_with_error.append(data)
                         
@@ -61,7 +62,7 @@ class ActionT(TransformData):
                 return df_result
             
             else:
-                msg_error = f"No hay lineamientos en la base de datos con los que relacionar las acciones"
+                msg_error = f"No hay lineas estrategicas en la base de datos con los que relacionar las acciones"
                 self.tools.write_log(msg_error, self.log_error_file)
                 print(msg_error)
 
@@ -130,11 +131,19 @@ class ActionT(TransformData):
 
                     else:
 
-                        existing_log.append(row["original"])
+                        existing_log.append({"Columna": self.action_column_name, "Fila": index+1,
+                                    'Valor': row['original'], "Linea estrategica": row['guideline'], 
+                                    "Error": "Este registro ya se encuentra en la base de datos"})
                     
                 if log_data:
                     
                     self.load.load_to_db(log_data, self.data["sirap_name"])
+
+                if len(existing_log) > 0 or len(self.data_with_error) > 0:
+
+                    data_with_error = existing_log + self.data_with_error
+
+                    self.tools.generate_csv_with_errors(data_with_error, self.action_column_name, self.data["sirap_name"])
                 
 
                 msg = f'''Carga de las acciones exitosa
