@@ -1,34 +1,43 @@
 import os
 import pandas as pd
+from database import PostgresConnection
+from pnn_monitoring_orm import *
+import numpy as np
+from sqlalchemy.orm import class_mapper
 
 
 class Rollback():
 
-    def __init__(self, parent_dir, id):
+    def __init__(self, root_dir, id):
         
-        self.output_path = os.path.join(parent_dir, "outputs")
+        self.output_path = os.path.join(root_dir, "outputs")
+        self.config_path = os.path.join(root_dir, "config")
         self.folder_path = os.path.join(self.output_path, id)
 
         self.encoding = "ISO-8859-1"
 
         self.models = {
-            "action": "Action",
+            "responsible": "Responsible",
             "actor": "Actor",
-            "guideline": "Guideline",
+            "time": "Time",
             "detail": "Detail",
-            "institution": "Institution",
             "milestone": "Milestone",
-            "objective": "Objective",
+            "action": "Action",
+            "guideline": "Guideline",
+            "institution": "Institution",
             "period": "Period",
             "product": "Product",
-            "responsible": "Responsible",
-            "time": "Time",
+            "year": "Year",
+            "objective": "Objective",
             "sirap": "Sirap",
-            "year": "Year"
         }
 
         self.run_rollback()
 
+    def database_connection(self):        
+        db = PostgresConnection(self.config_path)
+        db.connect()
+        return db
 
     def read_csvs(self, filter):
 
@@ -51,19 +60,22 @@ class Rollback():
     
     def run_rollback(self):
 
+        session = self.database_connection().session
 
-        responsible = self.read_csvs(self.models["responsible"])
-        actor = self.read_csvs(self.models["actor"])
-        time = self.read_csvs(self.models["time"])
-        detail = self.read_csvs(self.models["detail"])
-        milestone = self.read_csvs(self.models["milestone"])
-        action = self.read_csvs(self.models["action"])
-        guideline = self.read_csvs(self.models["guideline"])
-        institution = self.read_csvs(self.models["institution"])
-        period = self.read_csvs(self.models["period"])
-        product = self.read_csvs(self.models["product"])
-        year = self.read_csvs(self.models["year"])
-        objective = self.read_csvs(self.models["objective"])
-        sirap = self.read_csvs(self.models["sirap"])
-            
+        for key, element in self.models.items():
+
+            dfs = self.read_csvs(element)
+
+            ids = np.concatenate([df["id"].to_numpy() for df in dfs]).tolist()
+
+            model = None
+
+            for nombre, objeto in globals().items():
+                if isinstance(objeto, type) and issubclass(objeto, Base) and objeto != Base and nombre == element:
+                    model = objeto
+
+            print(f"\n\n---------------------  Borrando datos de la tabla: {element} -------------------------")
+            session.query(model).filter(model.id.in_(ids)).delete(synchronize_session=False)
+
+            session.commit()
         
