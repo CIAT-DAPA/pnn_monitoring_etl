@@ -6,8 +6,8 @@ from pnn_monitoring_orm import Year
 
 class YearT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.column_year = ExcelColumns.ANNUITY.value
         self.load = load
         self.log_error_file = "year_error_log.txt"

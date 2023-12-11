@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Action, Guideline
 
 class ActionT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.action_column_name = ExcelColumns.ACTION.value
         self.guideline_column_name = ExcelColumns.GUIDELINE.value
         self.action_indc_column_name = ExcelColumns.ACTION_INDICATOR.value

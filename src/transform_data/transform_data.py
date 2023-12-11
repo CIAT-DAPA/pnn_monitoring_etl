@@ -6,11 +6,11 @@ from tools import Tools
 
 class TransformData():
 
-    def __init__(self, data):
+    def __init__(self, data, root_dir):
         self.data = data
         self.column_error = ""
         self.column_errors = []
-        self.tools = Tools()
+        self.tools = Tools(root_dir)
         self.log_error_file = "transform_errors.txt"
 
         self.check_columns()

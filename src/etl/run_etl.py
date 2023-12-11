@@ -9,6 +9,7 @@ class ETLMaster():
 
     def __init__(self,root_dir):
         
+        self.root_dir = root_dir
         self.files_to_import_path = os.path.join(root_dir, "import")
         self.output_path = os.path.join(root_dir, "outputs")
         self.config_path = os.path.join(root_dir, "config")
@@ -34,54 +35,50 @@ class ETLMaster():
         raw_data.read_data()
         return raw_data
 
-    def load(self, data):
-
-        data.to_csv(self.processed_data_path, index=False)
-
     def run_etl(self):
 
         self.connection = self.database_connection()
 
-        load = LoadData(self.connection.session)
+        load = LoadData(self.connection.session, self.root_dir)
         
-        sirap = SirapT(load)
+        sirap = SirapT(load, self.root_dir)
         sirap.run_sirap()
 
         raw_data = self.extract(self.connection)
         for data in raw_data.dfs:
 
             print(f'------------------------------   Iniciando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
-            objective = ObjectiveT(data, load)
+            objective = ObjectiveT(data, load, self.root_dir)
             objective.run_objective()
 
-            product = ProductT(data, load)
+            product = ProductT(data, load, self.root_dir)
             product.run_products()
 
-            period = PeriodT(data, load)
+            period = PeriodT(data, load, self.root_dir)
             period.run_periods()
 
-            guideline = GuidelineT(data, load)
+            guideline = GuidelineT(data, load, self.root_dir)
             guideline.run_guidelines()
 
-            action = ActionT(data, load)
+            action = ActionT(data, load, self.root_dir)
             action.run_actions()
 
-            institution = InstitutionT(data, load)
+            institution = InstitutionT(data, load, self.root_dir)
             institution.run_institution()
 
-            milestone = MilestoneT(data, load)
+            milestone = MilestoneT(data, load, self.root_dir)
             milestone.run_milestone()
 
-            year = YearT(data, load)
+            year = YearT(data, load, self.root_dir)
             year.run_year()
 
-            detail = DetailT(data, load)
+            detail = DetailT(data, load, self.root_dir)
             detail.run_detail()
 
-            responsible = ResponsibleT(data, load)
+            responsible = ResponsibleT(data, load, self.root_dir)
             responsible.run_responsible()
 
-            actor = ActorT(data, load)
+            actor = ActorT(data, load, self.root_dir)
             actor.run_actor()
 
             print(f'------------------------------   Finalizando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')

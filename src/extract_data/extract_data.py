@@ -9,7 +9,7 @@ class ExtractData():
 
     def __init__(self, files_to_import_path, connection, config_path):
         self.config_file_path = os.path.join(config_path, "config_file.csv")
-        self.tools = Tools()
+        self.tools = Tools(os.path.join(files_to_import_path, '..'))
         self.files_to_import_path = files_to_import_path
         self.connection = connection
         self.matriz_name = "matriz_name"

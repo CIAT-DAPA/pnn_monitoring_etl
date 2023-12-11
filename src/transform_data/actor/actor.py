@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Actor, Institution, Detail, Milestone, Guideline,
 
 class ActorT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.column_name_actor = ExcelColumns.ACTOR.value 
         self.column_name_detail = ExcelColumns.DETAIL.value 
         self.column_name_milestone = ExcelColumns.MILESTONE.value 

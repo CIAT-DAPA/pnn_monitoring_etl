@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Milestone, Action, Guideline
 
 class MilestoneT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.milestone_column_name = ExcelColumns.MILESTONE.value
         self.action_column_name = ExcelColumns.ACTION.value
         self.prod_ind_column_name = ExcelColumns.PRODUCT_INDICATOR.value

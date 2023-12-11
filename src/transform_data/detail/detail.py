@@ -6,8 +6,8 @@ from datetime import datetime
 
 class DetailT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.detail_column_name = ExcelColumns.DETAIL.value
         self.amount_column_name = ExcelColumns.DETAIL_VALUE.value
         self.quantity_column_name = ExcelColumns.QUANTITY.value

@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Institution
 
 class InstitutionT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.column_name_actor = ExcelColumns.ACTOR.value 
         self.column_name_responsible = ExcelColumns.RESPONSIBLE.value 
         self.load = load

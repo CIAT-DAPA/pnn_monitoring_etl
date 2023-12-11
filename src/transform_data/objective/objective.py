@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Objective
 
 class ObjectiveT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.objective_column_name = ExcelColumns.OBJECTIVE.value
         self.load = load
         self.log_error_file = "objective_error_log.txt"
