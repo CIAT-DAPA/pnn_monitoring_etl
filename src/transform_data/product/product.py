@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Product
 
 class ProductT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.column_name = ExcelColumns.PRODUCT.value
         self.load = load
         self.log_error_file = "product_error_log.txt"

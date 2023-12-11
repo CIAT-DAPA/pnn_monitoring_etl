@@ -6,10 +6,9 @@ import csv
 
 class Tools():
 
-    def __init__(self):
-        self.grandparent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-        self.log_path = os.path.join(self.grandparent_dir, "log")
-        self.output_path = os.path.join(self.grandparent_dir, "outputs")
+    def __init__(self, root_dir):
+        self.log_path = os.path.join(root_dir, "log")
+        self.output_path = os.path.join(root_dir, "outputs")
         self.error_log_file = "log.txt"
         actu_date = datetime.now()
         format_data = actu_date.strftime("%Y%m%d_%H%M%S")

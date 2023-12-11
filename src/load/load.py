@@ -7,10 +7,9 @@ from tools import Tools
 class LoadData():
 
 
-    def __init__(self, session):
-        self.tools = Tools()
-        self.grandparent_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
-        self.output_path = os.path.join(self.grandparent_dir, "outputs")
+    def __init__(self, session, root_dir):
+        self.tools = Tools(root_dir)
+        self.output_path = os.path.join(root_dir, "outputs")
         actu_date = datetime.now()
         format_data = actu_date.strftime("%Y%m%d_%H%M%S")
         self.run_file_name = f"_output_{format_data}.csv"

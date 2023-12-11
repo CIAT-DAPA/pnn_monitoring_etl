@@ -5,8 +5,8 @@ from pnn_monitoring_orm import Guideline, Objective
 
 class GuidelineT(TransformData):
 
-    def __init__(self,data, load):
-        super().__init__(data)
+    def __init__(self, data, load, root_dir):
+        super().__init__(data, root_dir)
         self.guideline_column_name = ExcelColumns.GUIDELINE.value
         self.objective_column_name = ExcelColumns.OBJECTIVE.value
         self.load = load

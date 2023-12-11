@@ -6,17 +6,17 @@ import os
 
 class SirapT():
 
-    def __init__(self, load):
-        self.tools = Tools()
+    def __init__(self, load, root_dir):
+        self.tools = Tools(root_dir)
         self.load = load
         self.log_error_file = "sirap_error_log.txt"
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.script_dir = root_dir
 
     def obtain_data_from_df(self):
         data_to_save = []
 
         try:
-            import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(self.script_dir))), "import")
+            import_path = os.path.join(self.script_dir, "import")
             excel_files = [file for file in os.listdir(import_path) if file.endswith(".xlsx")]
 
             for file in excel_files:
