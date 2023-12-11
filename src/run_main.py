@@ -16,7 +16,7 @@ def main():
 
     parser.add_argument("-prc", "--process", type=int, help="Tipo de proceso, 1: Import - 2: Rollback", required=True)
 
-    parser.add_argument("-path", "--path", type=str, help="Ruta para importar", default=parent_dir)
+    parser.add_argument("-path", "--path", type=str, help="Ruta donde se encuentran los datos necesarios para la importación", default=parent_dir)
     parser.add_argument("-fid", "--fid", type=str, help="Id del rollback")
 
     args = parser.parse_args()
