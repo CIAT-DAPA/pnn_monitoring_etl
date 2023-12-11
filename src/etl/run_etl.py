@@ -7,12 +7,12 @@ import shutil
 
 class ETLMaster():
 
-    def __init__(self,parent_dir):
+    def __init__(self,root_dir):
         
-        self.files_to_import_path = os.path.join(parent_dir, "import")
-        self.output_path = os.path.join(parent_dir, "outputs")
-        self.config_path = os.path.join(parent_dir, "config")
-        self.log_path = os.path.join(parent_dir, "log")
+        self.files_to_import_path = os.path.join(root_dir, "import")
+        self.output_path = os.path.join(root_dir, "outputs")
+        self.config_path = os.path.join(root_dir, "config")
+        self.log_path = os.path.join(root_dir, "log")
         self.connection = None
         if os.path.isdir(self.log_path):
             shutil.rmtree(self.log_path)
