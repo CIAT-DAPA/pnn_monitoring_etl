@@ -5,12 +5,17 @@ from pnn_monitoring_orm import Action, Guideline
 
 class ActionT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+
         self.action_column_name = ExcelColumns.ACTION.value
         self.guideline_column_name = ExcelColumns.GUIDELINE.value
         self.action_indc_column_name = ExcelColumns.ACTION_INDICATOR.value
-        self.load = load
+        
         self.log_error_file = "action_error_log.txt"
         self.data_with_error = []
 

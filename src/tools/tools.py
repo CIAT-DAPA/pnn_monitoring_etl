@@ -1,37 +1,43 @@
 import pandas as pd
-import os, sys
+import os
 from datetime import datetime
 import unicodedata
 import csv
 
 class Tools():
 
-    def __init__(self, root_dir):
-        self.log_path = os.path.join(root_dir, "log")
-        self.output_path = os.path.join(root_dir, "outputs")
+    def __init__(self, root_dir, actu_date):
+        
+        self.workspace = os.path.join(root_dir, "workspace")
+        self.output_path = os.path.join(self.workspace, "outputs")
+        self.log_path = os.path.join(self.workspace, "log")
+
         self.error_log_file = "log.txt"
-        actu_date = datetime.now()
         format_data = actu_date.strftime("%Y%m%d_%H%M%S")
-        self.csv_file_error = f"_error_{format_data}.csv"
+        self.csv_file_error = f"_error.csv"
+        
+        self.folder_name = os.path.join(self.log_path, format_data)
+        os.makedirs(self.folder_name, exist_ok=True)
+        
 
     def get_specific_parameter(self, name, config_file_path):
 
         try:
             
-            config = pd.read_csv(config_file_path, header=None, index_col=0).to_dict()[1]
+            config = pd.read_csv(config_file_path, header=0, index_col=0)['value'].to_dict()
             value = config.get(name)
             return value
         except Exception as e:
             msg_error = f'Error al obtener el valor {name} del archivo {config_file_path}: {str(e)}'
             self.write_log(msg_error, self.error_log_file)
             print(msg_error)
-            sys.exit()
+            return False
 
     def write_log(self, message, file_name, output=False):
 
         # Log the error message to a file
 
-        log_path = self.output_path if output else self.log_path
+        log_path = self.output_path if output else self.folder_name
 
         error_log_file = os.path.join(log_path, file_name)
         with open(error_log_file, 'a') as f:
@@ -44,10 +50,10 @@ class Tools():
 
             file_name = f"{sirap_name}_{tittle}{self.csv_file_error}"
 
-            mode = "a" if os.path.isfile(os.path.join(self.log_path,file_name)) else "w"
+            mode = "a" if os.path.isfile(os.path.join(self.folder_name,file_name)) else "w"
 
 
-            with open(os.path.join(self.log_path,file_name), mode=mode, newline='') as file:
+            with open(os.path.join(self.folder_name,file_name), mode=mode, newline='') as file:
                 writer = csv.writer(file)
                 
                 table_columns = data[0].keys()
@@ -63,10 +69,14 @@ class Tools():
         
         except Exception as e:
             msg_error = f"Error al generar el csv de errores: {str(e)}\n"
-            self.tools.write_log(msg_error, self.log_error_file)
+            self.write_log(msg_error, self.error_log_file)
             print(msg_error)
 
 
     def normalize_text(self,data):
         text = unicodedata.normalize('NFKD', data).encode('ASCII', 'ignore').decode('utf-8')
         return text.lower().strip()
+
+
+    def check_folders(self, folders):
+        print(folders)

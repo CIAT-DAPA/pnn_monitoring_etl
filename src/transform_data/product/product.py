@@ -5,10 +5,13 @@ from pnn_monitoring_orm import Product
 
 class ProductT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
-        self.column_name = ExcelColumns.PRODUCT.value
+    def __init__(self, data, load):
         self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+        self.column_name = ExcelColumns.PRODUCT.value
         self.log_error_file = "product_error_log.txt"
 
         self.check_columns([self.column_name])

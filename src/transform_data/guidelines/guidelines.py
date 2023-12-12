@@ -5,11 +5,14 @@ from pnn_monitoring_orm import Guideline, Objective
 
 class GuidelineT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
         self.guideline_column_name = ExcelColumns.GUIDELINE.value
         self.objective_column_name = ExcelColumns.OBJECTIVE.value
-        self.load = load
         self.log_error_file = "guideline_error_log.txt"
         self.data_with_error = []
 

@@ -7,14 +7,14 @@ from enums import ExcelColumns
 class ExtractData():
 
 
-    def __init__(self, files_to_import_path, connection, config_path):
+    def __init__(self, files_to_import_path, connection, config_path, actu_date):
         self.config_file_path = os.path.join(config_path, "config_file.csv")
-        self.tools = Tools(os.path.join(files_to_import_path, '..'))
+        self.tools = Tools(os.path.join(config_path, '..'), actu_date)
         self.files_to_import_path = files_to_import_path
         self.connection = connection
         self.matriz_name = "matriz_name"
         self.log_error_file = "extract_error_log.txt"
-        self.skiprows = 5
+        self.skiprows = 0
         self.dfs = []
 
     def read_data(self):
@@ -32,6 +32,10 @@ class ExtractData():
                 file_name = os.path.splitext(file)[0]
 
                 sheet_name = self.tools.get_specific_parameter(self.matriz_name,self.config_file_path)
+
+                skiprows_value = self.tools.get_specific_parameter("matriz_skiprows",self.config_file_path)
+
+                self.skiprows = int(skiprows_value) if skiprows_value != False else self.skiprows
 
                 df = pd.read_excel(os.path.join(self.files_to_import_path, file), sheet_name=sheet_name, skiprows=self.skiprows, header=0)
 

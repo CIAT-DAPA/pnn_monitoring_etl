@@ -1,16 +1,14 @@
-import os
-import pandas as pd
 from enums import ExcelColumns
 from unidecode import unidecode
 from tools import Tools
 
 class TransformData():
 
-    def __init__(self, data, root_dir):
+    def __init__(self, data, root_dir, actu_date):
         self.data = data
         self.column_error = ""
         self.column_errors = []
-        self.tools = Tools(root_dir)
+        self.tools = Tools(root_dir, actu_date)
         self.log_error_file = "transform_errors.txt"
 
         self.check_columns()

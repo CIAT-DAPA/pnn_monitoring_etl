@@ -5,11 +5,15 @@ from pnn_monitoring_orm import Institution
 
 class InstitutionT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
-        self.column_name_actor = ExcelColumns.ACTOR.value 
-        self.column_name_responsible = ExcelColumns.RESPONSIBLE.value 
+    def __init__(self, data, load):
         self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+
+        self.column_name_actor = ExcelColumns.ACTOR.value 
+        self.column_name_responsible = ExcelColumns.RESPONSIBLE.value
         self.log_error_file = "institution_error_log.txt"
         self.check_columns([self.column_name_actor, self.column_name_responsible])
 

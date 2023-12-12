@@ -5,12 +5,15 @@ from pnn_monitoring_orm import Responsible, Institution, Detail, Milestone, Acti
 
 class ResponsibleT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
         self.column_name_responsible = ExcelColumns.RESPONSIBLE.value 
         self.column_name_detail = ExcelColumns.DETAIL.value 
-        self.column_name_milestone = ExcelColumns.MILESTONE.value 
-        self.load = load
+        self.column_name_milestone = ExcelColumns.MILESTONE.value
         self.log_error_file = "responsible_error_log.txt"
         self.check_columns([self.column_name_responsible, self.column_name_detail, self.column_name_milestone])
     

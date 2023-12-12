@@ -5,12 +5,16 @@ from pnn_monitoring_orm import Actor, Institution, Detail, Milestone, Guideline,
 
 class ActorT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+        
         self.column_name_actor = ExcelColumns.ACTOR.value 
         self.column_name_detail = ExcelColumns.DETAIL.value 
-        self.column_name_milestone = ExcelColumns.MILESTONE.value 
-        self.load = load
+        self.column_name_milestone = ExcelColumns.MILESTONE.value
         self.log_error_file = "actor_error_log.txt"
         self.check_columns([self.column_name_actor, self.column_name_detail, self.column_name_milestone])
     

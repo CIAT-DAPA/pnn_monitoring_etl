@@ -24,7 +24,7 @@ def main():
     if args.process == 1:
 
         path = args.path
-        files_to_import_path = os.path.join(path, "import")
+        files_to_import_path = os.path.join(path,"workspace", "import")
         print(f"Iniciando importación de datos de la ruta: {files_to_import_path}\n")
         etl_master = ETLMaster(path)
         etl_master.run_etl()
@@ -36,6 +36,7 @@ def main():
         id = args.fid
         print(f"Iniciando rollback del proceso: {id}\n")
         rollback = Rollback(path, id)
+        rollback.run_rollback()
 
 
 if __name__ == "__main__":

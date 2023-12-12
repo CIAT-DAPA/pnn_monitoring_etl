@@ -6,11 +6,14 @@ import os
 
 class SirapT():
 
-    def __init__(self, load, root_dir):
-        self.tools = Tools(root_dir)
+    def __init__(self, load):
         self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+        self.tools = Tools(self.root_dir, self.actu_date)
+        
         self.log_error_file = "sirap_error_log.txt"
-        self.script_dir = root_dir
+        self.script_dir = os.path.join(self.root_dir, "workspace")
 
     def obtain_data_from_df(self):
         data_to_save = []
