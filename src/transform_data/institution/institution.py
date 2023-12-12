@@ -24,6 +24,8 @@ class InstitutionT(TransformData):
                     institutions=row[self.column_name_actor]
                     institutions=institutions.replace(" - ", ",")
                     institutions=institutions.replace("\n", ",").split(",")
+                    institutions=[institution for institution in institutions if institution.strip()]
+                    institutions=[institution.strip() for institution in institutions]
                     for data in institutions:
                         data = {'normalize': self.tools.normalize_text(data), 'original': data}
                         data_to_save.append(data)
@@ -32,6 +34,8 @@ class InstitutionT(TransformData):
                     institutions=row[self.column_name_responsible]
                     institutions=institutions.replace(" - ", ",")
                     institutions=institutions.replace("\n", ",").split(",")
+                    institutions=[institution for institution in institutions if institution.strip()]
+                    institutions=[institution.strip() for institution in institutions]
                     for data in institutions:
                         data = {'normalize': self.tools.normalize_text(data), 'original': data}
                         data_to_save.append(data)
