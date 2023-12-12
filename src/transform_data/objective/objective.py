@@ -89,7 +89,7 @@ class ObjectiveT(TransformData):
                         log_data.append(objective)
                     else:
 
-                        existing_log.append({"Columna": self.objective_column_name, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor':row["original"],
                                              "Error": f"Este objetivo ya se encuentra en la base de datos"})
 

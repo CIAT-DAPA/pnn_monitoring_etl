@@ -93,7 +93,7 @@ class YearT(TransformData):
                         log_data.append(year)
                     else:
 
-                        existing_log.append({"Columna": self.column_year, "Fila": index, 
+                        existing_log.append({"Fila": index, 
                                              'Valor':row["year"],
                                              "Error": f"Este año ya se encuentra en la base de datos"})
 

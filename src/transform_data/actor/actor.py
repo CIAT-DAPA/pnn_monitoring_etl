@@ -147,7 +147,7 @@ class ActorT(TransformData):
                         new_log.append(row["institution_id"])
                         log_data.append(actor)
                     else:
-                        existing_log.append({"Columna": self.column_name_actor, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor institucion':row["institution_id"],
                                              'Valor detalle':row["detail_id"],
                                              "Error": f"Este actor ya se encuentra en la base de datos"})

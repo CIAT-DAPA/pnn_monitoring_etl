@@ -146,7 +146,7 @@ class ResponsibleT(TransformData):
                         new_log.append(row["institution_id"])
                         log_data.append(responsible)
                     else:
-                        existing_log.append({"Columna": self.column_name_responsible, "Fila": index, 
+                        existing_log.append({"Fila": index, 
                                              'Valor':row["institution_id"],
                                              "Error": f"Este responsable ya se encuentra en la base de datos"})
 

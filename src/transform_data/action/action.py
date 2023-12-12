@@ -52,7 +52,7 @@ class ActionT(TransformData):
 
                         else:
 
-                            data = {"Columna": self.action_column_name, "Fila": index+1,
+                            data = {"Fila": index+1,
                                     'Valor': row['original'], "Linea estrategica": row['guideline'], 
                                     "Error": "No se encontro la Linea Estrategica a la cual esta relacionada"}
 
@@ -136,7 +136,7 @@ class ActionT(TransformData):
 
                     else:
 
-                        existing_log.append({"Columna": self.action_column_name, "Fila": index+1,
+                        existing_log.append({"Fila": index+1,
                                     'Valor': row['original'], "Linea estrategica": row['guideline'], 
                                     "Error": "Este registro ya se encuentra en la base de datos"})
                     
