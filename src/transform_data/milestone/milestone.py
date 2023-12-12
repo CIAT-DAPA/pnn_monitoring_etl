@@ -53,7 +53,7 @@ class MilestoneT(TransformData):
                         
                         else:
 
-                            data = {"Columna": self.milestone_column_name, "Fila": index+1, 
+                            data = {"Fila": index+1, 
                                              'Valor':row[self.milestone_column_name],
                                              "Acción": action_text,
                                              "Error": f"No se encontro la acción a la cual esta relacionado"}
@@ -142,7 +142,7 @@ class MilestoneT(TransformData):
                         log_data.append(milestone)
                     else:
 
-                        existing_log.append({"Columna": self.milestone_column_name, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor':row["original"],
                                              "Acción": row["action"],
                                              "Error": f"Este registro ya se encuentra en la base de datos"})

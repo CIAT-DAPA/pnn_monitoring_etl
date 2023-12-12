@@ -47,7 +47,7 @@ class GuidelineT(TransformData):
 
                         else:
 
-                            data = {"Columna": self.guideline_column_name, "Fila": index+1, 
+                            data = {"Fila": index+1, 
                                     'Valor': row[self.guideline_column_name],
                                     "Objetivo": row[self.objective_column_name],
                                     "Error": "No se encontro el objetivo al cual esta relacionado en la base de datos"}
@@ -127,7 +127,7 @@ class GuidelineT(TransformData):
                         log_data.append(guideline)
                     else:
 
-                        existing_log.append({"Columna": self.guideline_column_name, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor':row["original"],
                                              "Objetivo": row["objective"],
                                              "Error": f"Este registro ya se encuentra en la base de datos"})

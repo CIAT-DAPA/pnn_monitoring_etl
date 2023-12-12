@@ -92,7 +92,7 @@ class InstitutionT(TransformData):
                         new_log.append(row["original"])
                         log_data.append(institution)
                     else:
-                        existing_log.append({"Columna actor": self.column_name_actor, "Columna responsable": self.column_name_responsible, "Fila": index, 
+                        existing_log.append({"Fila": index, 
                                              'Valor':row["original"],
                                              "Error": f"Esta institución ya se encuentra en la base de datos"})
 

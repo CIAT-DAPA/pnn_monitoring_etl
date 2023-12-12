@@ -103,7 +103,7 @@ class DetailT(TransformData):
                                 imp_value_msg = " El valor implementado esta vacio o no corresponde al tipo de dato aceptado  " if imp_value is False else ""
                                 annuity_msg = " La anualidad esta vacia o no corresponde al tipo de dato aceptado  " if not annuity or len(annuity) == 0 else ""
 
-                                data = {"Columna": self.detail_column_name, "Fila": index+1, 
+                                data = {"Fila": index+1, 
                                         'Valor': row[self.detail_column_name],
                                         "Error": f"Los valores del registro no corresponden a los adecuados:{amount_msg}{quantity_msg}{goal_msg}{base_line_msg}{imp_value_msg}{annuity_msg}"}
 
@@ -115,7 +115,7 @@ class DetailT(TransformData):
                             msg_pro = " No se encontro la relación con el producto " if period_id == 0 else ""
                             msg_per = " No se encontro la relación con el periodo " if period_id == 0 else ""
 
-                            data = {"Columna": self.detail_column_name, "Fila": index+1,
+                            data = {"Fila": index+1,
                                     "Valor": row[self.detail_column_name],
                                     "Error": f"No se encontro la dependencia a la cual esta relacionado:{msg_mile}{msg_pro}{msg_per}"}
 
@@ -229,7 +229,7 @@ class DetailT(TransformData):
 
                     else:
 
-                        existing_log.append({"Columna": self.detail_column_name, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor':row["original"],
                                              "Error": f"Este registro ya se encuentra en la base de datos"})
                     

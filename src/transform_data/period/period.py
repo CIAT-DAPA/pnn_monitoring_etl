@@ -89,7 +89,7 @@ class PeriodT(TransformData):
                         log_data.append(period)
                     else:
 
-                        existing_log.append({"Columna": self.column_name, "Fila": index+1, 
+                        existing_log.append({"Fila": index+1, 
                                              'Valor':row["original"],
                                              "Error": f"Este periodo ya se encuentra en la base de datos"})
 
