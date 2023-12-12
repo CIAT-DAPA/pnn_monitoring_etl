@@ -46,6 +46,8 @@ class ResponsibleT(TransformData):
                         responsibles=row[self.column_name_responsible]
                         responsibles=responsibles.replace(" - ", ",")
                         responsibles=responsibles.replace("\n", ",").split(",")
+                        responsibles=[responsible for responsible in responsibles if responsible.strip()]
+                        responsibles=[responsible.strip() for responsible in responsibles]
                         milestone_text = row[self.column_name_milestone] if pd.notna(row[self.column_name_milestone]) and row[self.column_name_milestone] else milestone_text
                         detail = row[self.column_name_detail]
                         detail_id = self.get_detail_id(detail,milestone_text, details_db)
