@@ -26,14 +26,16 @@ class InstitutionT(TransformData):
             for index, row in self.data["data"].iterrows():
                 if(pd.notna(row[self.column_name_actor])):
                     institutions=row[self.column_name_actor]
-                    institutions=institutions.replace("-", ",").split(",")
+                    institutions=institutions.replace(" - ", ",")
+                    institutions=institutions.replace("\n", ",").split(",")
                     for data in institutions:
                         data = {'normalize': self.tools.normalize_text(data), 'original': self.tools.clean_string(data)}
                         data_to_save.append(data)
 
                 if(pd.notna(row[self.column_name_responsible])):
                     institutions=row[self.column_name_responsible]
-                    institutions=institutions.replace("-", ",").split(",")
+                    institutions=institutions.replace(" - ", ",")
+                    institutions=institutions.replace("\n", ",").split(",")
                     for data in institutions:
                         data = {'normalize': self.tools.normalize_text(data), 'original': self.tools.clean_string(data)}
                         data_to_save.append(data)
