@@ -1,8 +1,9 @@
 import pandas as pd
-import os
+import os, sys
 from datetime import datetime
 import unicodedata
 import csv
+from pathlib import Path
 
 class Tools():
 
@@ -79,4 +80,64 @@ class Tools():
 
 
     def check_folders(self, folders):
-        print(folders)
+       
+        try:
+
+            errors = []
+
+            for folder in folders:
+                    
+                value, key = folder
+
+                if key:
+                    if not os.path.exists(value) or not list(Path(value).glob("*")):
+                        errors.append(value)
+
+                else:
+                    if not os.path.exists(value):
+                        errors.append(value)
+
+            if len(errors) > 0:
+
+                paths = ", ".join(map(str, errors))
+                msg_error = f"Los siguientes paths estan vacios o no contienen los archivos necesarios: {paths} \n-- No se puede continuar con la ejecuación --"
+                self.write_log(msg_error, self.error_log_file)
+                print(msg_error)
+                sys.exit()
+
+        except Exception as e:
+            paths = ", ".join(map(lambda folder: folder[1], folders))
+            msg_error = f"Error al revisar los paths {paths}: {str(e)}\n"
+            self.write_log(msg_error, self.error_log_file)
+            print(msg_error)
+            sys.exit()
+        
+    
+    def check_files(self, files):
+
+        try:
+
+            errors = []
+
+            for file in files:
+
+                if not os.path.isfile(file):
+                    errors.append(file)
+
+            if len(errors) > 0:
+
+                error_files = ", ".join(map(str, errors))
+                msg_error = f"Los siguientes archivos no se encontraron y son necesarios para la ejecución del programa: {error_files} \n-- No se puede continuar con la ejecuación --"
+                self.write_log(msg_error, self.error_log_file)
+                print(msg_error)
+                sys.exit()
+
+        except Exception as e:
+            paths = ", ".join(map(str, files))
+            msg_error = f"Error al revisar los paths {paths}: {str(e)}\n"
+            self.write_log(msg_error, self.error_log_file)
+            print(msg_error)
+            sys.exit()
+                   
+        
+        

@@ -4,6 +4,7 @@ from extract_data import ExtractData
 from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, ObjectiveT, ResponsibleT, PeriodT, DetailT, YearT, ActionT, SirapT, ActorT
 from load import LoadData
 from datetime import datetime
+from tools import Tools
 
 class ETLMaster():
 
@@ -14,12 +15,21 @@ class ETLMaster():
         self.files_to_import_path = os.path.join(self.workspace_path, "import")
         self.output_path = os.path.join(self.workspace_path, "outputs")
         self.config_path = os.path.join(root_dir, "config")
+        self.config_file = os.path.join(self.config_path, "config_file.csv")
         self.log_path = os.path.join(self.workspace_path, "log")
         self.connection = None
         
         self.actu_date = datetime.now()
 
+        self.tools = Tools(self.root_dir, self.actu_date)
+
         #Check folders
+        self.tools.check_folders([(self.workspace_path, False), 
+                                  (self.files_to_import_path, True), 
+                                  (self.config_path, True)])
+        
+        self.tools.check_files([self.config_file])
+        
 
         os.makedirs(self.workspace_path, exist_ok=True)
         os.makedirs(self.files_to_import_path, exist_ok=True)
