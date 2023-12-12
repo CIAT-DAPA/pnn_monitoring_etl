@@ -8,8 +8,8 @@ __pycache__/
 
 # Output of the 'coverage' tool
 coverage/
-log/*
-outputs/*
+workspace/log/*
+workspace/outputs/*
 
 # setuptools
 *.egg-info/

@@ -9,8 +9,10 @@ from sqlalchemy.orm import class_mapper
 class Rollback():
 
     def __init__(self, root_dir, id):
+
+        self.workspace_path = os.path.join(root_dir, "workspace")
         
-        self.output_path = os.path.join(root_dir, "outputs")
+        self.output_path = os.path.join(self.workspace_path, "outputs")
         self.config_path = os.path.join(root_dir, "config")
         self.folder_path = os.path.join(self.output_path, id)
 
@@ -32,7 +34,7 @@ class Rollback():
             "sirap": "Sirap",
         }
 
-        self.run_rollback()
+        
 
     def database_connection(self):        
         db = PostgresConnection(self.config_path)

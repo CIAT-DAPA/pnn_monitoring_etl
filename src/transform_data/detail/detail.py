@@ -6,8 +6,13 @@ from datetime import datetime
 
 class DetailT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+
         self.detail_column_name = ExcelColumns.DETAIL.value
         self.amount_column_name = ExcelColumns.DETAIL_VALUE.value
         self.quantity_column_name = ExcelColumns.QUANTITY.value
@@ -18,7 +23,6 @@ class DetailT(TransformData):
         self.base_line_column_name = ExcelColumns.BASE_LINE.value
         self.milestone_column_name = ExcelColumns.MILESTONE.value
         self.imp_value_column_name = ExcelColumns.IMP_VALUE.value
-        self.load = load
         self.log_error_file = "detail_error_log.txt"
         self.data_with_error = []
 

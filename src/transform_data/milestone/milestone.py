@@ -5,13 +5,16 @@ from pnn_monitoring_orm import Milestone, Action, Guideline
 
 class MilestoneT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
+    def __init__(self, data, load):
+        self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
         self.milestone_column_name = ExcelColumns.MILESTONE.value
         self.action_column_name = ExcelColumns.ACTION.value
         self.prod_ind_column_name = ExcelColumns.PRODUCT_INDICATOR.value
         self.prod_obs_column_name = ExcelColumns.OBSERVATION.value
-        self.load = load
         self.log_error_file = "milestone_error_log.txt"
         self.data_with_error = []
 

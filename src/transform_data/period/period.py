@@ -5,10 +5,13 @@ from pnn_monitoring_orm import Period
 
 class PeriodT(TransformData):
 
-    def __init__(self, data, load, root_dir):
-        super().__init__(data, root_dir)
-        self.column_name = ExcelColumns.PERIOD.value
+    def __init__(self, data, load):
         self.load = load
+        self.root_dir = self.load.root_dir
+        self.actu_date = self.load.actu_date
+
+        super().__init__(data, self.root_dir, self.actu_date)
+        self.column_name = ExcelColumns.PERIOD.value
         self.log_error_file = "period_error_log.txt"
 
         self.check_columns([self.column_name])
