@@ -32,7 +32,7 @@ class PostgresConnection():
 
             print("Conexión exitosa.")
         except Exception as e:
-            print(f"Error al conectar ala base de datos: {e}")
+            print(f"Error al conectar a la base de datos: {e}")
             sys.exit()
 
     def disconnect(self):
