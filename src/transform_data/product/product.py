@@ -27,7 +27,7 @@ class ProductT(TransformData):
                 if(pd.notna(row[self.column_name]) and row[self.column_name] and not row[self.column_name].isspace()):
                     normalize_data = self.tools.normalize_text(row[self.column_name])
 
-                    data = {'normalize': normalize_data, 'original': row[self.column_name]}
+                    data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.column_name])}
         
                     data_to_save.append(data)
                 

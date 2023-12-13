@@ -45,8 +45,8 @@ class MilestoneT(TransformData):
 
                             normalize_data = self.tools.normalize_text(row[self.milestone_column_name])
 
-                            data = {'normalize': normalize_data, 'original': row[self.milestone_column_name], 
-                                    "action": action_id, "prod_ind": prod_ind, "obs": obs}
+                            data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.milestone_column_name]), 
+                                    "action": action_id, "prod_ind": self.tools.clean_string(prod_ind), "obs": self.tools.clean_string(obs)}
                             
                 
                             data_to_save.append(data)
@@ -54,8 +54,8 @@ class MilestoneT(TransformData):
                         else:
 
                             data = {"Fila": index+1, 
-                                             'Valor':row[self.milestone_column_name],
-                                             "Acción": action_text,
+                                             'Valor': self.tools.clean_string(row[self.milestone_column_name]),
+                                             "Acción": self.tools.clean_string(action_text),
                                              "Error": f"No se encontro la acción a la cual esta relacionado"}
 
                             self.data_with_error.append(data)

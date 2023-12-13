@@ -28,14 +28,14 @@ class InstitutionT(TransformData):
                     institutions=row[self.column_name_actor]
                     institutions=institutions.replace("-", ",").split(",")
                     for data in institutions:
-                        data = {'normalize': self.tools.normalize_text(data), 'original': data}
+                        data = {'normalize': self.tools.normalize_text(data), 'original': self.tools.clean_string(data)}
                         data_to_save.append(data)
 
                 if(pd.notna(row[self.column_name_responsible])):
                     institutions=row[self.column_name_responsible]
                     institutions=institutions.replace("-", ",").split(",")
                     for data in institutions:
-                        data = {'normalize': self.tools.normalize_text(data), 'original': data}
+                        data = {'normalize': self.tools.normalize_text(data), 'original': self.tools.clean_string(data)}
                         data_to_save.append(data)
 
             df_result = pd.DataFrame(data_to_save)

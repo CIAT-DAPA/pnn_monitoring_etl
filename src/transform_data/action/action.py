@@ -46,14 +46,15 @@ class ActionT(TransformData):
                             action_indc = row[self.action_indc_column_name] if pd.notna(row[self.action_indc_column_name]) and row[self.action_indc_column_name] else ""
 
 
-                            data = {'normalize': normalize_data, 'original': row[self.action_column_name], "guideline": guideline_id, "action_indc": action_indc}
+                            data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.action_column_name]),
+                                     "guideline": guideline_id, "action_indc": self.tools.clean_string(action_indc)}
                 
                             data_to_save.append(data)
 
                         else:
 
                             data = {"Fila": index+1,
-                                    'Valor': row['original'], "Linea estrategica": row['guideline'], 
+                                    'Valor': self.tools.clean_string(row['original']), "Linea estrategica": row['guideline'], 
                                     "Error": "No se encontro la Linea Estrategica a la cual esta relacionada"}
 
                             self.data_with_error.append(data)

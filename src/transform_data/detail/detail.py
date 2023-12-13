@@ -87,7 +87,7 @@ class DetailT(TransformData):
 
                                 normalize_data = self.tools.normalize_text(row[self.detail_column_name])
 
-                                data = {'normalize': normalize_data, 'original': row[self.detail_column_name], 
+                                data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.detail_column_name]), 
                                         "amount": amount, "quantity": quantity, "goal": goal, "base_line": base_line, "imp_value": imp_value, 
                                         "milestone_id": milestone_id, "period_id": period_id, "product_id": product_id, "annuity": annuity}
                                 
@@ -104,7 +104,7 @@ class DetailT(TransformData):
                                 annuity_msg = " La anualidad esta vacia o no corresponde al tipo de dato aceptado  " if not annuity or len(annuity) == 0 else ""
 
                                 data = {"Fila": index+1, 
-                                        'Valor': row[self.detail_column_name],
+                                        'Valor': self.tools.clean_string(row[self.detail_column_name]),
                                         "Error": f"Los valores del registro no corresponden a los adecuados:{amount_msg}{quantity_msg}{goal_msg}{base_line_msg}{imp_value_msg}{annuity_msg}"}
 
                                 self.data_with_error.append(data)
@@ -116,7 +116,7 @@ class DetailT(TransformData):
                             msg_per = " No se encontro la relación con el periodo " if period_id == 0 else ""
 
                             data = {"Fila": index+1,
-                                    "Valor": row[self.detail_column_name],
+                                    "Valor": self.tools.clean_string(row[self.detail_column_name]),
                                     "Error": f"No se encontro la dependencia a la cual esta relacionado:{msg_mile}{msg_pro}{msg_per}"}
 
                             self.data_with_error.append(data)

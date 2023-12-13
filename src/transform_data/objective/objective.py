@@ -28,7 +28,7 @@ class ObjectiveT(TransformData):
                 if(pd.notna(row[self.objective_column_name]) and row[self.objective_column_name]):
 
                     normalize_data = self.tools.normalize_text(row[self.objective_column_name])
-                    data = {'normalize': normalize_data, 'original': row[self.objective_column_name]}
+                    data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.objective_column_name])}
                     data_to_save.append(data)
                     
             df_result = pd.DataFrame(data_to_save)

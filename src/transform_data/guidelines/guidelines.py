@@ -41,15 +41,16 @@ class GuidelineT(TransformData):
 
                             normalize_data = self.tools.normalize_text(row[self.guideline_column_name])
 
-                            data = {'normalize': normalize_data, 'original': row[self.guideline_column_name], "objective": objective_id}
+                            data = {'normalize': normalize_data, 'original': self.tools.clean_string(row[self.guideline_column_name]),
+                                     "objective": objective_id}
                 
                             data_to_save.append(data)
 
                         else:
 
                             data = {"Fila": index+1, 
-                                    'Valor': row[self.guideline_column_name],
-                                    "Objetivo": row[self.objective_column_name],
+                                    'Valor': self.tools.clean_string(row[self.guideline_column_name]),
+                                    "Objetivo": self.tools.clean_string(row[self.objective_column_name]),
                                     "Error": "No se encontro el objetivo al cual esta relacionado en la base de datos"}
 
                             self.data_with_error.append(data)
