@@ -108,6 +108,8 @@ class Rollback():
                                 model = objeto
 
                         print(f"\n\n---------------------  Borrando datos de la tabla: {element} -------------------------\n")
+
+
                         session.query(model).filter(model.id.in_(ids)).delete(synchronize_session=False)
 
                         session.commit()
@@ -121,6 +123,8 @@ class Rollback():
 
         except Exception as e:
             msg_error = f'Error al realizar el rollback: {str(e)}'
+            if "violates foreign key constraint" in str(e):
+                msg_error = f'Error al realizar el rollback, los registros de la tabla son dependencias de otros registros.\n El proceso sera abortado'
             self.tools.write_log(msg_error, self.error_log_file)
             print(msg_error)
             return False
