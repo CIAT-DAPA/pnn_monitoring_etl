@@ -74,9 +74,17 @@ class Tools():
             print(msg_error)
 
 
-    def normalize_text(self,data):
+    def normalize_text(self, data):
         text = unicodedata.normalize('NFKD', data).encode('ASCII', 'ignore').decode('utf-8')
-        return text.lower().strip()
+        return text.lower().strip().replace('\n', '').replace('\r', '')
+    
+    def clean_string(self, value):
+        if isinstance(value, str):
+            
+            value = value.strip()
+            
+            value = value.replace('\n', '').replace('\r', '')
+        return value
 
 
     def check_folders(self, folders):
