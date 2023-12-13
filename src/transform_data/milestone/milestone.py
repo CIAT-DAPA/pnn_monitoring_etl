@@ -15,6 +15,7 @@ class MilestoneT(TransformData):
         self.action_column_name = ExcelColumns.ACTION.value
         self.prod_ind_column_name = ExcelColumns.PRODUCT_INDICATOR.value
         self.prod_obs_column_name = ExcelColumns.OBSERVATION.value
+        self.prod_guideline_column_name = ExcelColumns.GUIDELINE.value
         self.log_error_file = "milestone_error_log.txt"
         self.data_with_error = []
 
@@ -26,6 +27,7 @@ class MilestoneT(TransformData):
         data_to_save = []
         action_text = ""
 
+
         try:
 
             actions_db = self.load.session.query(Action.id, Action.name, Action.guideline_id, Guideline.sirap_id).join(Guideline, Guideline.id == Action.guideline_id).all()
@@ -35,9 +37,22 @@ class MilestoneT(TransformData):
                 for index, row in self.data["data"].iterrows():
                     if(pd.notna(row[self.milestone_column_name]) and row[self.milestone_column_name] and not row[self.milestone_column_name].isspace()):
 
+                        if ((pd.notna(row[self.prod_guideline_column_name]) and row[self.prod_guideline_column_name] and not row[self.prod_guideline_column_name].isspace()) and
+                            not  (pd.notna(row[self.action_column_name]) and row[self.action_column_name] and not row[self.action_column_name].isspace()) ):
+                            action_text = ""
+                            data = {"Fila": index+1, 
+                                             'Valor': self.tools.clean_string(row[self.milestone_column_name]),
+                                             "Acción": self.tools.clean_string(action_text),
+                                             "Error": f"No se encontro la acción a la cual esta relacionado"}
+
+                            self.data_with_error.append(data)
+
+                            continue
+
                         action_text = row[self.action_column_name] if pd.notna(row[self.action_column_name]) and row[self.action_column_name] else action_text
 
                         action_id = self.get_action_id(action_text, actions_db)
+
                         if action_id:
 
                             prod_ind = row[self.prod_ind_column_name] if row[self.prod_ind_column_name] and pd.notna(row[self.prod_ind_column_name]) else ""
