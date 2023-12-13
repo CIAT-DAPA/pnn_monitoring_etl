@@ -45,7 +45,10 @@ class ActorT(TransformData):
                 for index, row in self.data["data"].iterrows():
                     if(pd.notna(row[self.column_name_actor]) and not row[self.column_name_actor].isspace()):
                         actors=row[self.column_name_actor]
-                        actors=actors.replace("-", ",").split(",")
+                        actors=actors.replace(" - ", ",")
+                        actors=actors.replace("\n", ",").split(",")
+                        actors=[actor for actor in actors if actor.strip()]
+                        actors=[actor.strip() for actor in actors]
                         milestone_text = row[self.column_name_milestone] if pd.notna(row[self.column_name_milestone]) and row[self.column_name_milestone] else milestone_text
                         detail = row[self.column_name_detail]
                         detail_id = self.get_detail_id(detail,milestone_text, details_db)
