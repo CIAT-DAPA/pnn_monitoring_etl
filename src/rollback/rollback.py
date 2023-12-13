@@ -3,10 +3,10 @@ import pandas as pd
 from database import PostgresConnection
 from pnn_monitoring_orm import *
 import numpy as np
-from sqlalchemy.orm import class_mapper
 from tools import Tools
 import csv
 from datetime import datetime
+from tqdm import tqdm
 
 
 class Rollback():
@@ -89,30 +89,35 @@ class Rollback():
 
             session = self.database_connection().session
 
-            for key, element in self.models.items():
+            total_iterations = len(self.models.items())
+            bar_format = '\n{l_bar}{bar}| {n:.0f}/{total:.0f} [{elapsed}<{remaining}, {rate_fmt}]\n'
 
-                dfs = self.read_csvs(element)
+            with tqdm(total=total_iterations, desc="Eliminando registros", bar_format=bar_format) as pbar:
+                for key, element in self.models.items():
 
-                if len(dfs) > 0:
+                    dfs = self.read_csvs(element)
 
-                    ids = np.concatenate([df["id"].to_numpy() for df in dfs]).tolist()
+                    if len(dfs) > 0:
 
-                    model = None
+                        ids = np.concatenate([df["id"].to_numpy() for df in dfs]).tolist()
 
-                    for nombre, objeto in globals().items():
-                        if isinstance(objeto, type) and issubclass(objeto, Base) and objeto != Base and nombre == element:
-                            model = objeto
+                        model = None
 
-                    print(f"\n\n---------------------  Borrando datos de la tabla: {element} -------------------------\n")
-                    session.query(model).filter(model.id.in_(ids)).delete(synchronize_session=False)
+                        for nombre, objeto in globals().items():
+                            if isinstance(objeto, type) and issubclass(objeto, Base) and objeto != Base and nombre == element:
+                                model = objeto
 
-                    session.commit()
+                        print(f"\n\n---------------------  Borrando datos de la tabla: {element} -------------------------\n")
+                        session.query(model).filter(model.id.in_(ids)).delete(synchronize_session=False)
 
-                    msg = f"Se eliminaron {len(ids)} registros de la base de datos."
-                    print(msg)
-                    print(f"\n\n-------------------------- ------------------------------")
+                        session.commit()
 
-                    self.generate_csv_with_deleted(ids, element)
+                        msg = f"Se eliminaron {len(ids)} registros de la base de datos."
+                        print(msg)
+                        print(f"\n\n-------------------------- ------------------------------")
+
+                        self.generate_csv_with_deleted(ids, element)
+                        pbar.update(1)
 
         except Exception as e:
             msg_error = f'Error al realizar el rollback: {str(e)}'

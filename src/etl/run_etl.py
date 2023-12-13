@@ -5,6 +5,8 @@ from transform_data import GuidelineT, ProductT, InstitutionT, MilestoneT, Objec
 from load import LoadData
 from datetime import datetime
 from tools import Tools
+from tqdm import tqdm
+
 
 class ETLMaster():
 
@@ -59,43 +61,58 @@ class ETLMaster():
         sirap.run_sirap()
 
         raw_data = self.extract(self.connection)
-        for data in raw_data.dfs:
+        total_iterations = len(raw_data.dfs)*11
+        bar_format = '\n{l_bar}{bar}| {n:.0f}/{total:.0f} [{elapsed}<{remaining}, {rate_fmt}]\n'
 
-            print(f'------------------------------   Iniciando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
-            objective = ObjectiveT(data, load)
-            objective.run_objective()
+        with tqdm(total=total_iterations, desc="Procesando Siraps", bar_format=bar_format) as pbar:
+            for data in raw_data.dfs:
 
-            product = ProductT(data, load)
-            product.run_products()
+                print(f'------------------------------   Iniciando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
+                objective = ObjectiveT(data, load)
+                objective.run_objective()
+                pbar.update(1)
 
-            period = PeriodT(data, load)
-            period.run_periods()
+                product = ProductT(data, load)
+                product.run_products()
+                pbar.update(1)
 
-            guideline = GuidelineT(data, load)
-            guideline.run_guidelines()
+                period = PeriodT(data, load)
+                period.run_periods()
+                pbar.update(1)
 
-            action = ActionT(data, load)
-            action.run_actions()
+                guideline = GuidelineT(data, load)
+                guideline.run_guidelines()
+                pbar.update(1)
 
-            institution = InstitutionT(data, load)
-            institution.run_institution()
+                action = ActionT(data, load)
+                action.run_actions()
+                pbar.update(1)
 
-            milestone = MilestoneT(data, load)
-            milestone.run_milestone()
+                institution = InstitutionT(data, load)
+                institution.run_institution()
+                pbar.update(1)
 
-            year = YearT(data, load)
-            year.run_year()
+                milestone = MilestoneT(data, load)
+                milestone.run_milestone()
+                pbar.update(1)
 
-            detail = DetailT(data, load)
-            detail.run_detail()
+                year = YearT(data, load)
+                year.run_year()
+                pbar.update(1)
 
-            responsible = ResponsibleT(data, load)
-            responsible.run_responsible()
+                detail = DetailT(data, load)
+                detail.run_detail()
+                pbar.update(1)
 
-            actor = ActorT(data, load)
-            actor.run_actor()
+                responsible = ResponsibleT(data, load)
+                responsible.run_responsible()
+                pbar.update(1)
 
-            print(f'------------------------------   Finalizando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
+                actor = ActorT(data, load)
+                actor.run_actor()
+
+                print(f'------------------------------   Finalizando el proceso para el SIRAP: {data["sirap_name"]}  -------------------------- \n\n')
+                pbar.update(1)
 
         self.connection.disconnect()
         print("Proceso ETL completado.")
