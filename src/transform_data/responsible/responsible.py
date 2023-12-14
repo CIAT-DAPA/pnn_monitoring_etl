@@ -55,7 +55,16 @@ class ResponsibleT(TransformData):
                             data = {'normalize': self.tools.normalize_text(data), 'original': data}
                             institution_text = data['original']
                             intitution_id = self.get_institution_id(institution_text, institutions_db)
-                            data_to_save.append({'institution_id': intitution_id, 'detail_id': detail_id})
+                            if intitution_id != 0 and detail_id != 0:
+                                data_to_save.append({'institution_id': intitution_id, 'detail_id': detail_id})
+                            elif intitution_id == 0:
+                                msg_error = f"El responsable {institution_text} no se encuentra en la base de datos"
+                                self.tools.write_log(msg_error, self.log_error_file)
+                                print(msg_error)
+                            elif detail_id == 0:
+                                msg_error = f"El detalle {detail} no se encuentra en la base de datos"
+                                self.tools.write_log(msg_error, self.log_error_file)
+                                print(msg_error)
 
                 df_result = pd.DataFrame(data_to_save)
                 df_result = df_result.drop_duplicates(subset=['institution_id', 'detail_id'])
