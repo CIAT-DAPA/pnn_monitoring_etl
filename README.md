@@ -4,8 +4,6 @@ The main goal of this project is to design and develop a system for monitoring t
 
 # PNN MONITORING ETL
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/CIAT-DAPA/pnn_monitoring_etl) ![](https://img.shields.io/github/v/tag/CIAT-DAPA/pnn_monitoring_etl)
-
 This component plays a key role in extracting data from external sources, such as Excel files and other sources of financial information. Its main function is to adjust, validate and transform the data so that it aligns precisely with the format and structure defined in the database [PNN Monitoring DB](https://github.com/CIAT-DAPA/pnn_monitoring_database).
 
 **Important notes**
@@ -29,7 +27,7 @@ To use etl you must have an instance of a postgresql database.
 
 ### Project Structure
 
-- `confg/`: Folder where the database credentials and other configuration data will be saved.
+- `config/`: Folder where the configuration data for the import process will be saved.
 - `workspace/log/`: Folder where all errors will be saved, (it is not necessary to create it, it is created automatically).
 - `workspace/import/`: This folder contains the Excel files used for data import.
 - `workspace/outputs/` : Folder where all outputs will be saved, (it is not necessary to create it, it is created automatically).
@@ -71,19 +69,28 @@ pip install -r requirements.txt
 
 This `run_main.py` script is a key component of the PNN monitoring ETL. It allows to perform two types of processes: Data Import and Rollback.
 
-## config file example
+## Configuration
 
-The project uses a configuration file `config_file.csv` to adjust certain parameters and database connection information.
+The project now uses environment variables to configure database connection information and a configuration file for other parameters.
 
-- user: This is the name of the user that will be used to access the database.
-- password: This is the secret key used to authenticate and allow access to the specified user.
-- host: This is the address of the server where the database is hosted.
-- port: This is the port number to which the application will connect to access the database on the server.
-- dbname: This is the specific name of the database to be accessed.
+### Required Environment Variables
+
+To run the project, you need to set the following environment variables:
+
+- DB_USER: This is the name of the user that will be used to access the database.
+- DB_PASSWORD: This is the secret key used to authenticate and allow access to the specified user.
+- DB_HOST: This is the address of the server where the database is hosted.
+- DB_PORT: This is the port number to which the application will connect to access the database on the server.
+- DB_NAME: This is the specific name of the database to be accessed.
+
+### Config file
+
+The project uses a configuration file `config_file.csv` to adjust certain parameters
+
 - matriz_name: Name of the excel sheet where the information to be imported is located.
 - matriz_skiprows: Number of rows to omit at the beginning of the Excel spreadsheet.
 
-## Parameters
+### Parameters
 
 The script uses the following parameters:
 
