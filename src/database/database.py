@@ -15,10 +15,13 @@ class PostgresConnection():
     def connect(self):
         try:
 
-            config = pd.read_csv(self.config_file, header=0, index_col=0)['value'].to_dict()
+            db_user = os.getenv('DB_USER')
+            db_password = os.getenv('DB_PASSWORD')
+            db_host = os.getenv('DB_HOST')
+            db_name = os.getenv('DB_NAME')
 
             connection_string = (
-                f'postgresql://{config["db_user"]}:{config["db_password"]}@{config["db_host"]}/{config["db_name"]}'
+                f'postgresql://{db_user}:{db_password}@{db_host}/{db_name}'
             )
 
             metadata = MetaData()
